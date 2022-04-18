@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+</head>
+<body>
+    <div id="header">
+        <h1>Todo List</h1>
+    </div>
+
+    <div id="sidebar">
+        <ul id="filters">
+            <li>All Tasks</li>
+            <li>Today</li>
+            <li>This Week</li>
+        </ul>
+        <ul id="projects"></ul>
+        <button>New Project</button>
+    </div>
+
+    <div id="main">
+        <div id="modal">
+            <form action="" onsubmit="return false">
+                <label for="title">Title
+                    <input type="text" id="title">
+                </label>
+                <label for="description">Description
+                    <input type="text" id="description">
+                </label>
+                <label for="dueDate">Due Date
+                    <input type="date" id="dueDate">
+                </label>
+                <div id="priority">
+                    <input type="radio" id="low" name="priority" value="low">
+                    <label for="low">Low</label><br>
+                    <input type="radio" id="medium" name="priority" value="medium">
+                    <label for="medium">Medium</label><br>
+                    <input type="radio" id="high" name="priority" value="high">
+                    <label for="high">High</label>
+                </div>
+                <button type="submit" id="submit">Add Todo</button>
+            </form>
+        </div>
+
+        <div id="todos"></div>
+    </div>
+
+    <script src="./main.js"></script>
+</body>
+</html>
