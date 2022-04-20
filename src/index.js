@@ -1,9 +1,10 @@
 import './stylesheet.css';
-import {myTodos, render, addTodo} from './todos.js';
+import {Todos} from './todos.js';
 
-render();
+let MyTodos = new Todos();
+MyTodos.render();
+
 const submit = document.getElementById('submit');
-console.log(myTodos);
 submit.addEventListener('click', () => {
     addTodo()
     render();
