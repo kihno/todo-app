@@ -1,3 +1,5 @@
+import pubsub from './pubsub.js';
+
 export class Todos {
     myTodos = [
         {
@@ -16,49 +18,49 @@ export class Todos {
     }
     
     //cache DOM
-    title = document.getElementById('title');
-    description = document.getElementById('description');
-    dueDate = document.getElementById('dueDate');
-    submit = document.getElementById('submit');
-    todoList = document.getElementById('todoList');
+    // title = document.getElementById('title');
+    // description = document.getElementById('description');
+    // dueDate = document.getElementById('dueDate');
+    // submit = document.getElementById('submit');
+    // todoList = document.getElementById('todoList');
     
     //bind events
     
     
     //functions
-    get priorityValue() {
-        const priority = document.getElementsByName('priority');
-        let value;
+    // get priorityValue() {
+    //     const priority = document.getElementsByName('priority');
+    //     let value;
     
-        for(let i = 0; i < priority.length; i++) {
-            if (priority[i].checked)
-            value = priority[i].value;
-        }
-        return value;
-    }
+    //     for(let i = 0; i < priority.length; i++) {
+    //         if (priority[i].checked)
+    //         value = priority[i].value;
+    //     }
+    //     return value;
+    // }
     
-    render() {
+    // render() {
         
-        myTodos.forEach(todo => {
-            const ul = document.createElement('ul');
-            ul.className = 'todo';
-            ul.setAttribute('data-index', myTodos.indexOf(todo));
-            todoList.appendChild(ul);
+    //     myTodos.forEach(todo => {
+    //         const ul = document.createElement('ul');
+    //         ul.className = 'todo';
+    //         ul.setAttribute('data-index', myTodos.indexOf(todo));
+    //         todoList.appendChild(ul);
     
-            for (const prop in todo) {
-                const li = document.createElement('li');
-                li.className = prop;
-                li.textContent = todo[prop];
-                ul.appendChild(li);
-            }
-        });
-    }
+    //         for (const prop in todo) {
+    //             const li = document.createElement('li');
+    //             li.className = prop;
+    //             li.textContent = todo[prop];
+    //             ul.appendChild(li);
+    //         }
+    //     });
+    // }
     
     addTodo() {
         const newTodo = new Todos(title.value, description.value, dueDate.value, priorityValue);
     
         myTodos.push(newTodo);
-        this.render();
+        pubsub.pub('todoAdded', newTodo);
     }
     
     completeTodo() {
