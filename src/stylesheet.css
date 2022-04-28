@@ -23,4 +23,5 @@ body {
 
 #modal>form {
     display: grid;
+    justify-items: start;
 }

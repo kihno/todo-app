@@ -3,39 +3,77 @@ import {pubsub} from './pubsub.js';
 import {Projects} from './projects';
 import {Todos} from './todos.js';
 
+(function () {
 
+const inbox = new Projects('inbox');
 
-// const submit = document.getElementById('submit');
-// submit.addEventListener('click', () => {
-//     addTodo()
-//     render();
-// });
+//Cache DOM
+const title = document.getElementById('title');
+const description = document.getElementById('description');
+const dueDate = document.getElementById('dueDate');
+const priority = document.getElementsByName('priority');
+const todoList = document.getElementById('todoList');
 
-// (function () {
-    // let inbox = new Projects('inbox');
+//Events
+const submit = document.getElementById('submit');
+submit.addEventListener('click', () => {
+    const newTodo = new Todos(title.value, description.value, dueDate.value, priorityValue());
+    inbox.addTodo(newTodo);
+});
 
-   const title = document.getElementById('title');
-   const description = document.getElementById('description');
-   const dueDate = document.getElementById('dueDate');
-   const submit = document.getElementById('submit');
-   const todoList = document.getElementById('todoList');
+pubsub.sub('todoAdded', render);
 
-    pubsub.sub('todoAdded', render);
-
-    function render() {
-        myTodos.forEach(todo => {
-            const ul = document.createElement('ul');
-            ul.className = 'todo';
-            ul.setAttribute('data-index', myTodos.indexOf(todo));
-            todoList.appendChild(ul);
+//Functions
+function priorityValue() {
     
-            for (const prop in todo) {
-                const li = document.createElement('li');
-                li.className = prop;
-                li.textContent = todo[prop];
-                ul.appendChild(li);
-            }
-        });
+    let value;
+
+    for(let i = 0; i < priority.length; i++) {
+        if (priority[i].checked)
+        value = priority[i].value;
+    }
+    return value;
+}
+
+function clearInput() {
+    for (let i = 0; i < priority.length; i++) {
+        priority[i].checked = false;
     }
 
-// })();
+    title.value = '';
+    description.value = '';
+    dueDate.value = '';
+}
+
+function clearProject() {
+    while (todoList.firstChild) {
+        todoList.removeChild(todoList.firstChild);
+    }
+}
+
+function render(project) {
+    clearProject();
+    
+    project.forEach(todo => {
+        const ul = document.createElement('ul');
+        ul.className = 'todo';
+        ul.setAttribute('data-index', project.indexOf(todo));
+        todoList.appendChild(ul);
+
+        const button = document.createElement('button');
+        button.className = 'delete';
+        button.textContent = 'X';
+        ul.appendChild(button);
+
+        for (const prop in todo) {
+            const li = document.createElement('li');
+            li.className = prop;
+            li.textContent = todo[prop];
+            ul.appendChild(li);
+        }
+    });
+    
+    clearInput();
+}
+
+})();

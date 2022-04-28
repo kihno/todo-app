@@ -1,14 +1,14 @@
 import pubsub from './pubsub.js';
 
 export class Todos {
-    myTodos = [
-        {
-            title: 'Do Things',
-            description: 'Things need to get done.',
-            dueDate: '04/20/22',
-            priority: 'low',
-        }
-    ];
+    // myTodos = [
+    //     {
+    //         title: 'Do Things',
+    //         description: 'Things need to get done.',
+    //         dueDate: '04/20/22',
+    //         priority: 'low',
+    //     }
+    // ];
     
     constructor(title, description, dueDate, priority) {
         this.title = title;
@@ -39,13 +39,13 @@ export class Todos {
     //     return value;
     // }
     
-    // render() {
+    // render(todos) {
         
-    //     myTodos.forEach(todo => {
+    //     todos.forEach(todo => {
     //         const ul = document.createElement('ul');
     //         ul.className = 'todo';
-    //         ul.setAttribute('data-index', myTodos.indexOf(todo));
-    //         todoList.appendChild(ul);
+    //         ul.setAttribute('data-index', todos.indexOf(todo));
+    //         // todoList.appendChild(ul);
     
     //         for (const prop in todo) {
     //             const li = document.createElement('li');
@@ -56,19 +56,19 @@ export class Todos {
     //     });
     // }
     
-    addTodo() {
-        const newTodo = new Todos(title.value, description.value, dueDate.value, priorityValue);
+    // addTodo() {
+    //     const newTodo = new Todos(title.value, description.value, dueDate.value, priorityValue);
     
-        myTodos.push(newTodo);
-        pubsub.pub('todoAdded', newTodo);
-    }
+    //     myTodos.push(newTodo);
+    //     pubsub.pub('todoAdded', newTodo);
+    // }
     
-    completeTodo() {
+    // completeTodo() {
     
-    }
+    // }
     
-    removeTodo() {
+    // removeTodo() {
     
-    }
+    // }
     
 }
