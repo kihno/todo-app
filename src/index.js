@@ -6,6 +6,7 @@ import {Todos} from './todos.js';
 (function () {
 
 const inbox = new Projects('inbox');
+let currentProject = inbox;
 
 //Cache DOM
 const title = document.getElementById('title');
@@ -21,15 +22,25 @@ const projectName = document.getElementById('projectName');
 const projectSubmit = document.getElementById('projectSubmit');
 const todoModal = document.getElementById('todoModal');
 const projectModal = document.getElementById('projectModal');
+const inboxButton = document.getElementById('inboxButton');
+const todayButton = document.getElementById('today');
+const weekButton = document.getElementById('week');
 
 //Events
+inboxButton.addEventListener('click', () => {
+    clearProject();
+    console.log(inbox);
+    currentProject = inbox;
+    render(inbox.project);
+});
+
 todoButton.addEventListener('click', () => {
     todoModal.style.display = 'block';
 });
 
 submit.addEventListener('click', () => {
     const newTodo = new Todos(title.value, description.value, dueDate.value, priorityValue());
-    inbox.addTodo(newTodo);
+    pushTodo(newTodo);
     todoModal.style.display = 'none';
 });
 
@@ -42,9 +53,17 @@ projectSubmit.addEventListener('click', () => {
     li.textContent = projectName.value;
     projectList.appendChild(li);
     const newProject = new Projects(projectName.value);
+
+    li.addEventListener('click', () => {
+        currentProject = newProject;
+        render(newProject.project);
+    });
+
+    currentProject = newProject;
     projectModal.style.display = 'none';
     projectName.value = '';
-    render(newProject);
+
+    clearProject();
 });
 
 pubsub.sub('todoAdded', render);
@@ -76,6 +95,15 @@ function clearProject() {
         todoList.removeChild(todoList.firstChild);
     }
 } 
+
+function pushTodo(newTodo) {
+    if (currentProject === inbox) {
+        inbox.addTodo(newTodo);
+    } else {
+        inbox.addTodo(newTodo);
+        currentProject.addTodo(newTodo);
+    }
+}
 
 function render(project) {
     clearProject();
