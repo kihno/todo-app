@@ -22,7 +22,8 @@
     </div>
 
     <div id="main">
-        <div id="modal">
+        <button id="addTodo">Create Task</button>
+        <div id="todoModal">
             <form action="" onsubmit="return false">
                 <label for="title">Title
                     <input type="text" id="title">
@@ -42,6 +43,15 @@
                     <label for="high">High</label>
                 </div>
                 <button type="submit" id="submit">Add Todo</button>
+            </form>
+        </div>
+
+        <div id='projectModal'>
+            <form action="" onsubmit="return false">
+                <label for="projectName">Name
+                    <input type="text" id="projectName">
+                </label>
+                <button type="submit" id="projectSubmit">Create Project</button>
             </form>
         </div>
 
