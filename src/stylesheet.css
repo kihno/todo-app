@@ -21,7 +21,15 @@ body {
     grid-area: 2 / 1 / 3 / 2;
 }
 
-#modal>form {
+form {
     display: grid;
     justify-items: start;
+}
+
+#todoModal {
+    display: none;
+}
+
+#projectModal {
+    display: none;
 }

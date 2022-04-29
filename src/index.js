@@ -13,12 +13,38 @@ const description = document.getElementById('description');
 const dueDate = document.getElementById('dueDate');
 const priority = document.getElementsByName('priority');
 const todoList = document.getElementById('todoList');
+const todoButton = document.getElementById('addTodo');
 const submit = document.getElementById('submit');
+const projectButton = document.getElementById('newProject');
+const projectList = document.getElementById('projects');
+const projectName = document.getElementById('projectName');
+const projectSubmit = document.getElementById('projectSubmit');
+const todoModal = document.getElementById('todoModal');
+const projectModal = document.getElementById('projectModal');
 
 //Events
+todoButton.addEventListener('click', () => {
+    todoModal.style.display = 'block';
+});
+
 submit.addEventListener('click', () => {
     const newTodo = new Todos(title.value, description.value, dueDate.value, priorityValue());
     inbox.addTodo(newTodo);
+    todoModal.style.display = 'none';
+});
+
+projectButton.addEventListener('click', () => {
+    projectModal.style.display = 'block';
+});
+
+projectSubmit.addEventListener('click', () => {
+    const li = document.createElement('li');
+    li.textContent = projectName.value;
+    projectList.appendChild(li);
+    const newProject = new Projects(projectName.value);
+    projectModal.style.display = 'none';
+    projectName.value = '';
+    render(newProject);
 });
 
 pubsub.sub('todoAdded', render);
