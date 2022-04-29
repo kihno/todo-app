@@ -13,19 +13,19 @@ const description = document.getElementById('description');
 const dueDate = document.getElementById('dueDate');
 const priority = document.getElementsByName('priority');
 const todoList = document.getElementById('todoList');
+const submit = document.getElementById('submit');
 
 //Events
-const submit = document.getElementById('submit');
 submit.addEventListener('click', () => {
     const newTodo = new Todos(title.value, description.value, dueDate.value, priorityValue());
     inbox.addTodo(newTodo);
 });
 
 pubsub.sub('todoAdded', render);
+pubsub.sub('todoDeleted', render);
 
 //Functions
 function priorityValue() {
-    
     let value;
 
     for(let i = 0; i < priority.length; i++) {
@@ -49,7 +49,7 @@ function clearProject() {
     while (todoList.firstChild) {
         todoList.removeChild(todoList.firstChild);
     }
-}
+} 
 
 function render(project) {
     clearProject();
@@ -64,6 +64,10 @@ function render(project) {
         button.className = 'delete';
         button.textContent = 'X';
         ul.appendChild(button);
+
+        button.addEventListener('click', (e) => {
+            inbox.removeTodo(e.target.parentNode);
+        });
 
         for (const prop in todo) {
             const li = document.createElement('li');
