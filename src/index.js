@@ -1,5 +1,5 @@
 import './stylesheet.css';
-import {format, isToday} from 'date-fns';
+import {format, isWithinInterval, addDays, parseISO} from 'date-fns';
 import {pubsub} from './pubsub.js';
 import {Projects} from './projects';
 import {Todos} from './todos.js';
@@ -9,8 +9,8 @@ import {Todos} from './todos.js';
 const inbox = new Projects('inbox');
 let currentProject = inbox;
 
-const today = new Projects('today');
-const week = new Projects('week');
+const todayInbox = new Projects('today');
+const weekInbox = new Projects('week');
 
 //Cache DOM
 const title = document.getElementById('title');
@@ -39,14 +39,14 @@ inboxButton.addEventListener('click', () => {
 
 todayButton.addEventListener('click', () => {
     clearProject();
-    currentProject = today;
-    render(today.project);
+    currentProject = inbox;
+    render(todayInbox.project);
 });
 
 weekButton.addEventListener('click', () => {
     clearProject();
-    currentProject = week;
-    render(week.project);
+    currentProject = inbox;
+    render(weekInbox.project);
 });
 
 todoButton.addEventListener('click', () => {
@@ -115,23 +115,31 @@ function clearProject() {
 function pushTodo(newTodo) {
     if (currentProject === inbox) {
         inbox.addTodo(newTodo);
-    } else {
+    } else  {
         inbox.addTodo(newTodo);
         currentProject.addTodo(newTodo);
     }
     pushToday(newTodo);
+    pushWeek(newTodo);
 }
 
 function pushToday(newTodo) {
     const todaysDate = format(new Date(), 'yyyy-MM-dd');
 
     if (newTodo.dueDate === todaysDate) {
-        today.addTodo(newTodo);
+        todayInbox.addTodo(newTodo);
+        weekInbox.addTodo(newTodo);
     }
 }
 
 function pushWeek(newTodo) {
-    
+    // const start = new Date();
+    // const end = addDays(new Date(), 7);
+
+    if (isWithinInterval(parseISO(newTodo.dueDate), {start: new Date, end: addDays(new Date(), 6)})) {
+        weekInbox.addTodo(newTodo);
+        console.log(weekInbox);
+    }
 }
 
 function render(project) {
@@ -162,5 +170,6 @@ function render(project) {
     
     clearInput();
 }
+
 
 })();
