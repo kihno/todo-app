@@ -1,4 +1,5 @@
 import './stylesheet.css';
+import {format, isToday} from 'date-fns';
 import {pubsub} from './pubsub.js';
 import {Projects} from './projects';
 import {Todos} from './todos.js';
@@ -7,6 +8,9 @@ import {Todos} from './todos.js';
 
 const inbox = new Projects('inbox');
 let currentProject = inbox;
+
+const today = new Projects('today');
+const week = new Projects('week');
 
 //Cache DOM
 const title = document.getElementById('title');
@@ -29,9 +33,20 @@ const weekButton = document.getElementById('week');
 //Events
 inboxButton.addEventListener('click', () => {
     clearProject();
-    console.log(inbox);
     currentProject = inbox;
     render(inbox.project);
+});
+
+todayButton.addEventListener('click', () => {
+    clearProject();
+    currentProject = today;
+    render(today.project);
+});
+
+weekButton.addEventListener('click', () => {
+    clearProject();
+    currentProject = week;
+    render(week.project);
 });
 
 todoButton.addEventListener('click', () => {
@@ -42,6 +57,7 @@ submit.addEventListener('click', () => {
     const newTodo = new Todos(title.value, description.value, dueDate.value, priorityValue());
     pushTodo(newTodo);
     todoModal.style.display = 'none';
+    render(currentProject.project);
 });
 
 projectButton.addEventListener('click', () => {
@@ -103,6 +119,19 @@ function pushTodo(newTodo) {
         inbox.addTodo(newTodo);
         currentProject.addTodo(newTodo);
     }
+    pushToday(newTodo);
+}
+
+function pushToday(newTodo) {
+    const todaysDate = format(new Date(), 'yyyy-MM-dd');
+
+    if (newTodo.dueDate === todaysDate) {
+        today.addTodo(newTodo);
+    }
+}
+
+function pushWeek(newTodo) {
+    
 }
 
 function render(project) {
