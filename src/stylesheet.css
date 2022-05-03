@@ -33,3 +33,16 @@ form {
 #projectModal {
     display: none;
 }
+
+.todo, #todoHeader {
+    list-style: none;
+    display: grid;
+    grid-auto-flow: column;
+}
+.checkbox, .checked {
+    height: 24px;
+}
+
+.checked {
+    background-image: url(./checkHex.svg);
+}

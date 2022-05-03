@@ -23,7 +23,7 @@
     </div>
 
     <div id="main">
-        <button id="addTodo">Create Task</button>
+        
         <div id="todoModal">
             <form action="" onsubmit="return false">
                 <label for="title">Title
@@ -56,9 +56,17 @@
             </form>
         </div>
 
+        <ul id="todoHeader">
+            <li>Task</li>
+            <li>Description</li>
+            <li>Due Date</li>
+            <li>Priority</li>
+        </ul>
+
         <div id="todoList"></div>
+        <button id="addTodo">Create Task</button>
     </div>
 
-    <script src="./main.js"></script>
+    <script src="./main.js" defer></script>
 </body>
 </html>

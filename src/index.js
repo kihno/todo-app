@@ -1,5 +1,10 @@
 import './stylesheet.css';
 import {format, isWithinInterval, addDays, parseISO} from 'date-fns';
+import AddIcon from './add.svg';
+import TrashIcon from './trash.svg';
+import EditIcon from './edit.svg';
+import HexIcon from './hex.svg';
+import CheckHexIcon from './checkHex.svg';
 import {pubsub} from './pubsub.js';
 import {Projects} from './projects';
 import {Todos} from './todos.js';
@@ -11,6 +16,13 @@ let currentProject = inbox;
 
 const todayInbox = new Projects('today');
 const weekInbox = new Projects('week');
+
+//Test
+const testTodo = new Todos('Task1', 'Do stuff', '2022-05-02', 'high');
+inbox.addTodo(testTodo);
+console.log(testTodo);
+console.log(inbox);
+
 
 //Cache DOM
 const title = document.getElementById('title');
@@ -29,6 +41,22 @@ const projectModal = document.getElementById('projectModal');
 const inboxButton = document.getElementById('inboxButton');
 const todayButton = document.getElementById('today');
 const weekButton = document.getElementById('week');
+
+//Images
+const addIcon = new Image();
+addIcon.src = AddIcon;
+
+const trashIcon = new Image();
+trashIcon.src = TrashIcon;
+
+const editIcon = new Image();
+editIcon.src = EditIcon;
+
+const hexIcon = new Image();
+hexIcon.src = HexIcon;
+
+const checkHexIcon = new Image();
+checkHexIcon.src = CheckHexIcon;
 
 //Events
 inboxButton.addEventListener('click', () => {
@@ -133,9 +161,6 @@ function pushToday(newTodo) {
 }
 
 function pushWeek(newTodo) {
-    // const start = new Date();
-    // const end = addDays(new Date(), 7);
-
     if (isWithinInterval(parseISO(newTodo.dueDate), {start: new Date, end: addDays(new Date(), 6)})) {
         weekInbox.addTodo(newTodo);
         console.log(weekInbox);
@@ -151,13 +176,11 @@ function render(project) {
         ul.setAttribute('data-index', project.indexOf(todo));
         todoList.appendChild(ul);
 
-        const button = document.createElement('button');
-        button.className = 'delete';
-        button.textContent = 'X';
-        ul.appendChild(button);
-
-        button.addEventListener('click', (e) => {
-            inbox.removeTodo(e.target.parentNode);
+        hexIcon.className = 'checkbox';
+        ul.appendChild(hexIcon);
+    
+        hexIcon.addEventListener('click', () => {
+            hexIcon.classList.toggle('checked');
         });
 
         for (const prop in todo) {
@@ -166,10 +189,24 @@ function render(project) {
             li.textContent = todo[prop];
             ul.appendChild(li);
         }
+        editIcon.className = 'edit';
+        ul.appendChild(editIcon);
+
+        editIcon.addEventListener('click', () => {
+            
+        });
+
+        trashIcon.className = 'delete';
+        ul.appendChild(trashIcon);
+
+        trashIcon.addEventListener('click', (e) => {
+            inbox.removeTodo(e.target.parentNode);
+        });
+        
     });
     
     clearInput();
 }
 
-
+render(inbox.project);
 })();
