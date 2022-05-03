@@ -4,7 +4,6 @@ import AddIcon from './add.svg';
 import TrashIcon from './trash.svg';
 import EditIcon from './edit.svg';
 import HexIcon from './hex.svg';
-import CheckHexIcon from './checkHex.svg';
 import {pubsub} from './pubsub.js';
 import {Projects} from './projects';
 import {Todos} from './todos.js';
@@ -54,9 +53,6 @@ editIcon.src = EditIcon;
 
 const hexIcon = new Image();
 hexIcon.src = HexIcon;
-
-const checkHexIcon = new Image();
-checkHexIcon.src = CheckHexIcon;
 
 //Events
 inboxButton.addEventListener('click', () => {

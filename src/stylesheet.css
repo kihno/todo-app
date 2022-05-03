@@ -10,6 +10,10 @@ body {
     grid: 1fr 4fr / 1fr 4fr;
 }
 
+#inboxButton, #today, #week, #projects>li, button, .checkbox, .edit, .delete {
+    cursor: pointer;
+}
+
 #header {
     background-color: aquamarine;
     color: white;
