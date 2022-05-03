@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todo List</title>
+    <title>Taskmaster</title>
 </head>
 <body>
     <div id="header">
-        <h1>Todo List</h1>
+        <h1>Taskmaster</h1>
     </div>
 
     <div id="sidebar">
@@ -18,7 +18,11 @@
             <li id="week">This Week</li>
         </ul>
         
-        <button id="newProject">New Project</button>
+        <div id="newProject">
+            <img src="../src/add.svg">
+            <p>New Project</p>
+        </div>
+
         <ul id="projects"></ul>
     </div>
 
@@ -64,7 +68,10 @@
         </ul>
 
         <div id="todoList"></div>
-        <button id="addTodo">Create Task</button>
+        <div id="addTodo">
+            <img  src="../src/add.svg">
+            <p>Add Task</p>
+        </div>
     </div>
 
     <script src="./main.js" defer></script>
