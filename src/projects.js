@@ -2,21 +2,21 @@ import {pubsub} from './pubsub.js';
 
 export class Projects {
 
-    constructor(title) {
+    constructor(title, tasks) {
         this.title = title;
-        this.project = [];
+        this.tasks = tasks || [];
     }
 
     addTodo(todo) {
-        this.project.push(todo);
-        pubsub.pub('todoAdded', this.project);
+        this.tasks.push(todo);
+        pubsub.pub('todoAdded', this.tasks);
     }
 
-    removeTodo(todo) {
-        const index = todo.getAttribute('data-index');
+    removeTodo(task) {
+        const index = task.getAttribute('data-index');
         if (index > -1) {
-            this.project.splice(index, 1);
+            this.tasks.splice(index, 1);
         }
-        pubsub.pub('todoDeleted', this.project);
-    }
+        pubsub.pub('todoDeleted', this.tasks);
+    }s
 }
