@@ -1,13 +1,13 @@
-import './stylesheet.css';
 import {format, isWithinInterval, addDays, parseISO} from 'date-fns';
 import TrashIcon from './trash.svg';
 import EditIcon from './edit.svg';
 import HexIcon from './hex.svg';
+import {init} from './index.js'
 import {pubsub} from './pubsub.js';
 import {Projects} from './projects';
 import {Todos} from './todos.js';
 
-(function () {
+export const events = (() => {
 
     //Cache DOM
     const title = document.getElementById('title');
@@ -26,31 +26,40 @@ import {Todos} from './todos.js';
     const inboxButton = document.getElementById('inboxButton');
     const todayButton = document.getElementById('today');
     const weekButton = document.getElementById('week');
-    
+
     //Initialize Projects
-    let inbox = new Projects('inbox');
-    let todayInbox = new Projects('today');
-    let weekInbox = new Projects('week');
+
+    init();
+    let inbox = init.inbox;
+    let todayInbox = init.todayInbox;
+    let weekInbox = init.weekInbox;
+    let allProjects = init.allProjects;
     let currentProject = inbox;
-    let allProjects = JSON.parse(localStorage.getItem('allProjects')) || [];
 
-    if (allProjects.length === 0) {
-        allProjects.push(inbox, todayInbox, weekInbox);
-        localStorage.setItem('allProjects', JSON.stringify(allProjects));
-    } else {
 
-        inbox = new Projects(allProjects[0].title, allProjects[0].tasks);
-        todayInbox = new Projects(allProjects[1].title, allProjects[1].tasks);
-        weekInbox = new Projects(allProjects[2].title, allProjects[2].tasks);
+    // let inbox = new Projects('inbox');
+    // let todayInbox = new Projects('today');
+    // let weekInbox = new Projects('week');
+    // let currentProject = inbox;
+    // let allProjects = JSON.parse(localStorage.getItem('allProjects')) || [];
 
-        for ( let i = 3; i < allProjects.length; i++) {
-            const newProject = new Projects(allProjects[i].title, allProjects[i].tasks);
-            createProjectElement(newProject);
-        }
+    // if (allProjects.length === 0) {
+    //     allProjects.push(inbox, todayInbox, weekInbox);
+    //     localStorage.setItem('allProjects', JSON.stringify(allProjects));
+    // } else {
+
+    //     inbox = new Projects(allProjects[0].title, allProjects[0].tasks);
+    //     todayInbox = new Projects(allProjects[1].title, allProjects[1].tasks);
+    //     weekInbox = new Projects(allProjects[2].title, allProjects[2].tasks);
+
+    //     for ( let i = 3; i < allProjects.length; i++) {
+    //         const newProject = new Projects(allProjects[i].title, allProjects[i].tasks);
+    //         createProjectElement(newProject);
+    //     }
         
-    }
+    // }
 
-    // Events
+    //Events
     inboxButton.addEventListener('click', () => {
         clearProject();
         currentProject = inbox;
@@ -175,6 +184,10 @@ import {Todos} from './todos.js';
         }
     }
 
+    // function setStorage(project) {
+    //     localStorage.setItem(`${project.title}`, JSON.stringify(project));
+    // }
+
     function render(project) {
         clearProject();
         
@@ -215,22 +228,11 @@ import {Todos} from './todos.js';
             ul.appendChild(trashIcon);
 
             trashIcon.addEventListener('click', (e) => {
-                let taskTitle = document.querySelector('.title');
-
-                // currentProject.removeTodo(e.target.parentNode);
-
-                allProjects.forEach(project => {
-                    project.tasks.forEach(task => {
-                        if (taskTitle.textContent === task.title) {
-                            let index = project.tasks.indexOf(task);
-                            project.tasks.splice(index,1);
-                        }
-                    });
-                    
-                });
-
+                currentProject.removeTodo(e.target.parentNode);
+                inbox.removeTodo(e.target.parentNode);
+                todayInbox.removeTodo(e.target.parentNode);
+                weekInbox.removeTodo(e.target.parentNode);
                 localStorage.setItem('allProjects', JSON.stringify(allProjects));
-                render(currentProject.tasks);
             });
             
         });
@@ -238,4 +240,9 @@ import {Todos} from './todos.js';
         clearInput();
     }
     render(inbox.tasks);
+
+    return {
+        createProjectElement
+    }
+
 })();
