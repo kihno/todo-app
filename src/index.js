@@ -35,20 +35,24 @@ import {Todos} from './todos.js';
     let allProjects = JSON.parse(localStorage.getItem('allProjects')) || [];
 
     if (allProjects.length === 0) {
+
         allProjects.push(inbox, todayInbox, weekInbox);
         localStorage.setItem('allProjects', JSON.stringify(allProjects));
+
     } else {
 
         inbox = new Projects(allProjects[0].title, allProjects[0].tasks);
         todayInbox = new Projects(allProjects[1].title, allProjects[1].tasks);
         weekInbox = new Projects(allProjects[2].title, allProjects[2].tasks);
 
-        for ( let i = 3; i < allProjects.length; i++) {
-            const newProject = new Projects(allProjects[i].title, allProjects[i].tasks);
-            createProjectElement(newProject);
-        }
+        renderProjectList();
+        // for ( let i = 3; i < allProjects.length; i++) {
+        //     const newProject = new Projects(allProjects[i].title, allProjects[i].tasks);
+        //     createProjectElement(newProject);
+        // }
         
     }
+
 
     // Events
     inboxButton.addEventListener('click', () => {
@@ -86,24 +90,39 @@ import {Todos} from './todos.js';
     });
 
     projectSubmit.addEventListener('click', () => {
-        const ul = document.createElement('ul');
-        const li = document.createElement('li');
-        ul.className = 'userProject';
-        li.textContent = projectName.value;
-        ul.appendChild(li);
-
-        const trashIcon = new Image();
-        trashIcon.src = TrashIcon;
-        trashIcon.className = 'delete';
-        ul.appendChild(trashIcon);
-
-        projectList.appendChild(ul);
         const newProject = new Projects(projectName.value);
+        createProjectElement(newProject);
 
-        ul.addEventListener('click', () => {
-            currentProject = newProject;
-            render(newProject.tasks);
-        });
+        // const ul = document.createElement('ul');
+        // const li = document.createElement('li');
+        // ul.className = 'userProject';
+        // li.className = 'projectTitle';
+        // li.textContent = projectName.value;
+        // ul.appendChild(li);
+
+        // const trashIcon = new Image();
+        // trashIcon.src = TrashIcon;
+        // trashIcon.className = 'delete';
+        // ul.appendChild(trashIcon);
+
+        // trashIcon.addEventListener('click', () => {
+        //     projectTitle = document.querySelector('.projectTitle');
+
+        //     allProjects.forEach(project => {
+        //         if (projectTitle === project.title) {
+        //             let index = allProjects.indexOf(project);
+        //             allProjects.splice(index,1);
+        //         }
+        //     });
+        // });
+
+        // projectList.appendChild(ul);
+        
+
+        // ul.addEventListener('click', () => {
+        //     currentProject = newProject;
+        //     render(newProject.tasks);
+        // });
 
         currentProject = newProject;
         projectModal.style.display = 'none';
@@ -149,6 +168,7 @@ import {Todos} from './todos.js';
         const ul = document.createElement('ul');
         const li = document.createElement('li');
         ul.className = 'userProject';
+        li.className = 'projectTitle';
         li.textContent = project.title || projectName.value;
         ul.appendChild(li);
 
@@ -156,6 +176,21 @@ import {Todos} from './todos.js';
         trashIcon.src = TrashIcon;
         trashIcon.className = 'delete';
         ul.appendChild(trashIcon);
+
+        trashIcon.addEventListener('click', () => {
+            let projectTitle = document.querySelector('.projectTitle');
+
+            allProjects.forEach(project => {
+                if (projectTitle.textContent === project.title) {
+                    let index = allProjects.indexOf(project);
+                    allProjects.splice(index,1);
+                }
+            });
+
+            projectTitle.parentNode.remove();
+            localStorage.setItem(`allProjects`, JSON.stringify(allProjects));
+            // renderProjectList();
+        });
 
         projectList.appendChild(ul);;
 
@@ -189,6 +224,42 @@ import {Todos} from './todos.js';
         if (isWithinInterval(parseISO(newTodo.dueDate), {start: new Date, end: addDays(new Date(), 6)})) {
             weekInbox.addTodo(newTodo);
             console.log(weekInbox);
+        }
+    }
+
+    function deleteTask() {
+        let taskTitle = document.querySelector('.title');
+
+        allProjects.forEach(project => {
+            project.tasks.forEach(task => {
+                if (taskTitle.textContent === task.title) {
+                    let index = project.tasks.indexOf(task);
+                    project.tasks.splice(index,1);
+                }
+            });
+            
+        });
+
+        localStorage.setItem('allProjects', JSON.stringify(allProjects));
+        render(currentProject.tasks);
+    }
+
+    function deleteProject() {
+        let projectTitle = document.querySelector('.projectTitle');
+
+        allProjects.forEach(project => {
+            if (projectTitle.textContent === project.title) {
+                let index = allProjects.indexOf(project);
+                allProjects.splice(index,1);
+            }
+        });
+    }
+
+
+    function renderProjectList() {
+        for ( let i = 3; i < allProjects.length; i++) {
+            const newProject = new Projects(allProjects[i].title, allProjects[i].tasks);
+            createProjectElement(newProject);
         }
     }
 
@@ -243,10 +314,10 @@ import {Todos} from './todos.js';
                     });
                     
                 });
-
+        
                 localStorage.setItem('allProjects', JSON.stringify(allProjects));
                 render(currentProject.tasks);
-            });
+            }); 
             
         });
         
