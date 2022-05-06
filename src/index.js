@@ -86,12 +86,21 @@ import {Todos} from './todos.js';
     });
 
     projectSubmit.addEventListener('click', () => {
+        const ul = document.createElement('ul');
         const li = document.createElement('li');
+        ul.className = 'userProject';
         li.textContent = projectName.value;
-        projectList.appendChild(li);
+        ul.appendChild(li);
+
+        const trashIcon = new Image();
+        trashIcon.src = TrashIcon;
+        trashIcon.className = 'delete';
+        ul.appendChild(trashIcon);
+
+        projectList.appendChild(ul);
         const newProject = new Projects(projectName.value);
 
-        li.addEventListener('click', () => {
+        ul.addEventListener('click', () => {
             currentProject = newProject;
             render(newProject.tasks);
         });
@@ -137,15 +146,23 @@ import {Todos} from './todos.js';
     } 
 
     function createProjectElement(project) {
+        const ul = document.createElement('ul');
         const li = document.createElement('li');
+        ul.className = 'userProject';
         li.textContent = project.title || projectName.value;
+        ul.appendChild(li);
+
+        const trashIcon = new Image();
+        trashIcon.src = TrashIcon;
+        trashIcon.className = 'delete';
+        ul.appendChild(trashIcon);
+
+        projectList.appendChild(ul);;
 
         li.addEventListener('click', () => {
             currentProject = project;
             render(project.tasks);
         });
-
-        projectList.appendChild(li);
     }
 
     function pushTodo(newTodo) {
@@ -206,7 +223,7 @@ import {Todos} from './todos.js';
             ul.appendChild(editIcon);
 
             editIcon.addEventListener('click', () => {
-                
+           
             });
 
             const trashIcon = new Image();
@@ -214,10 +231,8 @@ import {Todos} from './todos.js';
             trashIcon.className = 'delete';
             ul.appendChild(trashIcon);
 
-            trashIcon.addEventListener('click', (e) => {
+            trashIcon.addEventListener('click', () => {
                 let taskTitle = document.querySelector('.title');
-
-                // currentProject.removeTodo(e.target.parentNode);
 
                 allProjects.forEach(project => {
                     project.tasks.forEach(task => {

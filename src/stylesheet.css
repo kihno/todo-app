@@ -10,7 +10,7 @@ body {
     grid: 1fr 4fr / 1fr 4fr;
 }
 
-#inboxButton, #today, #week, #projects>li, button, .checkbox, .edit, .delete, #newProject, #addTodo {
+#inboxButton, #today, #week, #projects>ul, button, .checkbox, .edit, .delete, #newProject, #addTodo {
     cursor: pointer;
 }
 
@@ -33,6 +33,11 @@ body {
 #sidebar {
     background: lightgrey;
     grid-area: 2 / 1 / 3 / 2;
+}
+
+#projects>ul {
+    display: flex;
+    align-items: center;
 }
 
 form {
