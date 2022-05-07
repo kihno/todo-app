@@ -10,11 +10,11 @@ body {
     grid: 1fr 4fr / 1fr 4fr;
 }
 
-#inboxButton, #today, #week, #projects>ul, button, .checkbox, .edit, .delete, #newProject, #addTodo {
+#inboxButton, #today, #week, #projects>ul, button, .checkbox, .edit, .delete, #newProject, #addTask {
     cursor: pointer;
 }
 
-#newProject, #addTodo {
+#newProject, #addTask {
     display: flex;
     align-items: center;
     justify-content: space-evenly;
@@ -40,12 +40,16 @@ body {
     align-items: center;
 }
 
+.userProject>.delete  {
+    display: none;
+}
+
 form {
     display: grid;
     justify-items: start;
 }
 
-#todoModal {
+#taskModal {
     display: none;
 }
 
@@ -53,7 +57,7 @@ form {
     display: none;
 }
 
-.todo, #todoHeader {
+.task, #taskHeader {
     list-style: none;
     display: grid;
     grid-auto-flow: column;

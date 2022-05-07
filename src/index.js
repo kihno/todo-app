@@ -5,7 +5,7 @@ import EditIcon from './edit.svg';
 import HexIcon from './hex.svg';
 import {pubsub} from './pubsub.js';
 import {Projects} from './projects';
-import {Todos} from './todos.js';
+import {Tasks} from './tasks.js';
 
 (function () {
 
@@ -14,14 +14,14 @@ import {Todos} from './todos.js';
     const description = document.getElementById('description');
     const dueDate = document.getElementById('dueDate');
     const priority = document.getElementsByName('priority');
-    const todoList = document.getElementById('todoList');
-    const todoButton = document.getElementById('addTodo');
+    const taskList = document.getElementById('taskList');
+    const taskButton = document.getElementById('addTask');
     const submit = document.getElementById('submit');
     const projectButton = document.getElementById('newProject');
     const projectList = document.getElementById('projects');
     const projectName = document.getElementById('projectName');
     const projectSubmit = document.getElementById('projectSubmit');
-    const todoModal = document.getElementById('todoModal');
+    const taskModal = document.getElementById('taskModal');
     const projectModal = document.getElementById('projectModal');
     const inboxButton = document.getElementById('inboxButton');
     const todayButton = document.getElementById('today');
@@ -46,11 +46,6 @@ import {Todos} from './todos.js';
         weekInbox = new Projects(allProjects[2].title, allProjects[2].tasks);
 
         renderProjectList();
-        // for ( let i = 3; i < allProjects.length; i++) {
-        //     const newProject = new Projects(allProjects[i].title, allProjects[i].tasks);
-        //     createProjectElement(newProject);
-        // }
-        
     }
 
 
@@ -58,31 +53,33 @@ import {Todos} from './todos.js';
     inboxButton.addEventListener('click', () => {
         clearProject();
         currentProject = inbox;
-        render(inbox.tasks);
+        taskButton.style.display = 'flex';
+        renderTasks(inbox.tasks);
     });
 
     todayButton.addEventListener('click', () => {
         clearProject();
         currentProject = inbox;
-        render(todayInbox.tasks);
+        taskButton.style.display = 'none';
+        renderTasks(todayInbox.tasks);
     });
 
     weekButton.addEventListener('click', () => {
         clearProject();
         currentProject = inbox;
-        render(weekInbox.tasks);
+        taskButton.style.display = 'none';
+        renderTasks(weekInbox.tasks);
     });
 
-    todoButton.addEventListener('click', () => {
-        todoModal.style.display = 'block';
+    taskButton.addEventListener('click', () => {
+        taskModal.style.display = 'block';
     });
 
     submit.addEventListener('click', () => {
-        const newTodo = new Todos(title.value, description.value, dueDate.value, priorityValue());
-        pushTodo(newTodo);
-        todoModal.style.display = 'none';
-        render(currentProject.tasks);
-        localStorage.setItem(`allProjects`, JSON.stringify(allProjects));
+        let formattedDate = format(parseISO(dueDate.value), 'MM-dd-yyyy');
+        const newTask = new Tasks(title.value, description.value, dueDate.value, priorityValue());
+        pushTask(newTask);
+        taskModal.style.display = 'none';
     });
 
     projectButton.addEventListener('click', () => {
@@ -93,51 +90,27 @@ import {Todos} from './todos.js';
         const newProject = new Projects(projectName.value);
         createProjectElement(newProject);
 
-        // const ul = document.createElement('ul');
-        // const li = document.createElement('li');
-        // ul.className = 'userProject';
-        // li.className = 'projectTitle';
-        // li.textContent = projectName.value;
-        // ul.appendChild(li);
-
-        // const trashIcon = new Image();
-        // trashIcon.src = TrashIcon;
-        // trashIcon.className = 'delete';
-        // ul.appendChild(trashIcon);
-
-        // trashIcon.addEventListener('click', () => {
-        //     projectTitle = document.querySelector('.projectTitle');
-
-        //     allProjects.forEach(project => {
-        //         if (projectTitle === project.title) {
-        //             let index = allProjects.indexOf(project);
-        //             allProjects.splice(index,1);
-        //         }
-        //     });
-        // });
-
-        // projectList.appendChild(ul);
-        
-
-        // ul.addEventListener('click', () => {
-        //     currentProject = newProject;
-        //     render(newProject.tasks);
-        // });
-
         currentProject = newProject;
         projectModal.style.display = 'none';
         projectName.value = '';
 
         allProjects.push(newProject);
-        localStorage.setItem(`allProjects`, JSON.stringify(allProjects));
+        pubsub.pub('projectAdded', newProject);
 
         clearProject();
     });
 
-    pubsub.sub('todoAdded', render);
-    pubsub.sub('todoDeleted', render);
+    pubsub.sub('taskAdded', setStorage);
+    pubsub.sub('taskDeleted', setStorage);
+    pubsub.sub('projectAdded', setStorage);
+    pubsub.sub('projectDeleted', setStorage);
 
     //Functions
+    function setStorage() {
+        localStorage.setItem(`allProjects`, JSON.stringify(allProjects));
+        renderTasks(currentProject.tasks);
+    }
+
     function priorityValue() {
         let value;
 
@@ -159,8 +132,8 @@ import {Todos} from './todos.js';
     }
 
     function clearProject() {
-        while (todoList.firstChild) {
-            todoList.removeChild(todoList.firstChild);
+        while (taskList.firstChild) {
+            taskList.removeChild(taskList.firstChild);
         }
     } 
 
@@ -177,71 +150,50 @@ import {Todos} from './todos.js';
         trashIcon.className = 'delete';
         ul.appendChild(trashIcon);
 
-        trashIcon.addEventListener('click', () => {
-            let projectTitle = document.querySelector('.projectTitle');
-
-            allProjects.forEach(project => {
-                if (projectTitle.textContent === project.title) {
-                    let index = allProjects.indexOf(project);
-                    allProjects.splice(index,1);
-                }
-            });
-
-            projectTitle.parentNode.remove();
-            localStorage.setItem(`allProjects`, JSON.stringify(allProjects));
-            // renderProjectList();
-        });
+        trashIcon.addEventListener('click', deleteProject); 
 
         projectList.appendChild(ul);;
 
+        ul.addEventListener('mouseover', () => {
+            ul.lastChild.style.display = 'inline';
+        });
+
+        ul.addEventListener('mouseout', () => {
+            ul.lastChild.style.display = 'none';
+        });
+
         li.addEventListener('click', () => {
             currentProject = project;
-            render(project.tasks);
+            console.log(currentProject);
+            taskButton.style.display = 'flex';
+            renderTasks(project.tasks);
         });
     }
 
-    function pushTodo(newTodo) {
+    function pushTask(newTask) {
         if (currentProject === inbox) {
-            inbox.addTodo(newTodo);
+            inbox.addTask(newTask);
         } else  {
-            inbox.addTodo(newTodo);
-            currentProject.addTodo(newTodo);
+            inbox.addTask(newTask);
+            currentProject.addTask(newTask);
         }
-        pushToday(newTodo);
-        pushWeek(newTodo);
+        pushToday(newTask);
+        pushWeek(newTask);
     }
 
-    function pushToday(newTodo) {
+    function pushToday(newTask) {
         const todaysDate = format(new Date(), 'yyyy-MM-dd');
 
-        if (newTodo.dueDate === todaysDate) {
-            todayInbox.addTodo(newTodo);
-            weekInbox.addTodo(newTodo);
+        if (newTask.dueDate === todaysDate) {
+            todayInbox.addTask(newTask);
+            weekInbox.addTask(newTask);
         }
     }
 
-    function pushWeek(newTodo) {
-        if (isWithinInterval(parseISO(newTodo.dueDate), {start: new Date, end: addDays(new Date(), 6)})) {
-            weekInbox.addTodo(newTodo);
-            console.log(weekInbox);
+    function pushWeek(newTask) {
+        if (isWithinInterval(parseISO(newTask.dueDate), {start: new Date, end: addDays(new Date(), 6)})) {
+            weekInbox.addTask(newTask);
         }
-    }
-
-    function deleteTask() {
-        let taskTitle = document.querySelector('.title');
-
-        allProjects.forEach(project => {
-            project.tasks.forEach(task => {
-                if (taskTitle.textContent === task.title) {
-                    let index = project.tasks.indexOf(task);
-                    project.tasks.splice(index,1);
-                }
-            });
-            
-        });
-
-        localStorage.setItem('allProjects', JSON.stringify(allProjects));
-        render(currentProject.tasks);
     }
 
     function deleteProject() {
@@ -251,7 +203,28 @@ import {Todos} from './todos.js';
             if (projectTitle.textContent === project.title) {
                 let index = allProjects.indexOf(project);
                 allProjects.splice(index,1);
+                pubsub.pub('projectDeleted', project);
             }
+        });
+
+        projectTitle.parentNode.remove();
+    }
+
+    function deleteTask(e) {
+        let taskUl = e.target.parentNode;
+        let taskTitle = taskUl.querySelector('.title').textContent;
+        let taskDescription = taskUl.querySelector('.description').textContent;
+        let taskDueDate = taskUl.querySelector('.dueDate').textContent;
+
+        allProjects.forEach(project => {
+            project.tasks.forEach(task => {
+                if (taskTitle === task.title && taskDescription === task.description && taskDueDate === task.dueDate) {
+                    let index = project.tasks.indexOf(task);
+                    project.tasks.splice(index,1);
+                    pubsub.pub('taskDeleted', project);
+                }
+            });
+            
         });
     }
 
@@ -263,14 +236,14 @@ import {Todos} from './todos.js';
         }
     }
 
-    function render(project) {
+    function renderTasks(project) {
         clearProject();
         
         project.forEach(task => {
             const ul = document.createElement('ul');
-            ul.className = 'todo';
+            ul.className = 'task';
             ul.setAttribute('data-index', project.indexOf(task));
-            todoList.appendChild(ul);
+            taskList.appendChild(ul);
 
             const hexIcon = new Image();
             hexIcon.src = HexIcon;
@@ -284,7 +257,13 @@ import {Todos} from './todos.js';
             for (const prop in task) {
                 const li = document.createElement('li');
                 li.className = prop;
-                li.textContent = task[prop];
+
+                if (prop === dueDate) {
+                    li.textContent = format(parseISO(task[prop]), 'MM-dd-yyyy');
+                } else {
+                    li.textContent = task[prop];
+                }
+                
                 ul.appendChild(li);
             }
 
@@ -302,26 +281,11 @@ import {Todos} from './todos.js';
             trashIcon.className = 'delete';
             ul.appendChild(trashIcon);
 
-            trashIcon.addEventListener('click', () => {
-                let taskTitle = document.querySelector('.title');
+            trashIcon.addEventListener('click', deleteTask);
 
-                allProjects.forEach(project => {
-                    project.tasks.forEach(task => {
-                        if (taskTitle.textContent === task.title) {
-                            let index = project.tasks.indexOf(task);
-                            project.tasks.splice(index,1);
-                        }
-                    });
-                    
-                });
-        
-                localStorage.setItem('allProjects', JSON.stringify(allProjects));
-                render(currentProject.tasks);
-            }); 
-            
         });
         
         clearInput();
     }
-    render(inbox.tasks);
+    renderTasks(inbox.tasks);
 })();

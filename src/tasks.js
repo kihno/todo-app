@@ -1,6 +1,6 @@
 import pubsub from './pubsub.js';
 
-export class Todos {
+export class Tasks {
     
     constructor(title, description, dueDate, priority) {
         this.title = title;

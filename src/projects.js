@@ -7,16 +7,16 @@ export class Projects {
         this.tasks = tasks || [];
     }
 
-    addTodo(todo) {
-        this.tasks.push(todo);
-        pubsub.pub('todoAdded', this.tasks);
+    addTask(task) {
+        this.tasks.push(task);
+        pubsub.pub('taskAdded', this.tasks);
     }
 
-    removeTodo(task) {
+    removeTask(task) {
         const index = task.getAttribute('data-index');
         if (index > -1) {
             this.tasks.splice(index, 1);
         }
-        pubsub.pub('todoDeleted', this.tasks);
+        pubsub.pub('taskDeleted', this.tasks);
     }s
 }
