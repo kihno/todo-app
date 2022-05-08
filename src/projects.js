@@ -13,10 +13,12 @@ export class Projects {
     }
 
     removeTask(task) {
-        const index = task.getAttribute('data-index');
-        if (index > -1) {
-            this.tasks.splice(index, 1);
-        }
+        // const index = task.getAttribute('data-index');
+        // if (index > -1) {
+        //     this.tasks.splice(index, 1);
+        // }
+        let index = this.tasks.indexOf(task);
+        this.tasks.splice(index,1);
         pubsub.pub('taskDeleted', this.tasks);
-    }s
+    }
 }
