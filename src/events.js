@@ -185,7 +185,7 @@ export const events = (() => {
     }
 
     function pushToday(newTask) {
-        const todaysDate = format(new Date(), 'MM-dd-yyyy');
+        const todaysDate = format(new Date(), 'yyyy-MM-dd');
 
         if (newTask.dueDate === todaysDate) {
             user.todayInbox.addTask(newTask);
@@ -199,18 +199,29 @@ export const events = (() => {
         }
     }
 
-    function deleteProject() {
-        let projectTitle = document.querySelector('.projectTitle');
+    function deleteProject(e) {
+        let projectUl = e.target.parentNode;
+        let projectTitle = projectUl.querySelector('.projectTitle');
 
         user.allProjects.forEach(project => {
             if (projectTitle.textContent === project.title) {
+                let deadProject = project.title;
+
+                user.allProjects.forEach(project => {
+                    project.tasks.forEach(task => {
+                        if (task.project === deadProject) {
+                            project.removeTask(task)
+                        }
+                    });
+                });
+
                 let index = user.allProjects.indexOf(project);
                 user.allProjects.splice(index,1);
                 pubsub.pub('projectDeleted', project);
             }
         });
 
-        projectTitle.parentNode.remove();
+        projectUl.remove();
     }
 
     function deleteTask(e) {
@@ -222,7 +233,6 @@ export const events = (() => {
         user.allProjects.forEach(project => {
             project.tasks.forEach(task => {
                 if (taskTitle === task.title && taskDescription === task.description && taskDueDate === task.dueDate) {
-                    console.log(project);
                     project.removeTask(task);
                     // project.removeTask(task);
                     // let index = project.tasks.indexOf(task);
