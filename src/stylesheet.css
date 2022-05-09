@@ -49,11 +49,7 @@ form {
     justify-items: start;
 }
 
-#taskModal {
-    display: none;
-}
-
-#projectModal {
+#taskModal, #projectModal, #editTaskModal {
     display: none;
 }
 

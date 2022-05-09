@@ -29,20 +29,4 @@ export const user = {
 
         }
     }
-
-    //     if (allProjects.length === 0) {
-
-    //         this.allProjects.push(inbox, todayInbox, weekInbox);
-    //         localStorage.setItem('allProjects', JSON.stringify(allProjects));
-
-    //     } else {
-
-    //         this.inbox = new Projects(allProjects[0].title, allProjects[0].tasks);
-    //         this.todayInbox = new Projects(allProjects[1].title, allProjects[1].tasks);
-    //         this.weekInbox = new Projects(allProjects[2].title, allProjects[2].tasks);
-
-    //         // events.renderProjectList();
-    //     }
-    //     // events.renderTasks(inbox.tasks);
-    // }
 };

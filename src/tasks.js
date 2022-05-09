@@ -1,4 +1,4 @@
-import pubsub from './pubsub.js';
+import {pubsub} from './pubsub.js';
 
 export class Tasks {
     
@@ -10,37 +10,23 @@ export class Tasks {
         this.project = project;
     }
 
-    // get title() {
-    //     return this.title;
-    // }
+    set taskTitle(title) {
+        this.title = title;
+        pubsub.pub('taskUpdated', this.title);
+    }
 
-    // set title(newTitle) {
-    //     this._title = newTitle;
-    // }
-   
-    // get description() {
-    //     return this.description;
-    // }
+     set taskDescription(description) {
+        this.description = description;
+        pubsub.pub('taskUpdated', this.description);
+    }
 
-    // set description(newdescription) {
-    //     this._description = newdescription;
-    // }
+    set taskDueDate(dueDate) {
+        this.dueDate = dueDate;
+        pubsub.pub('taskUpdated', this.dueDate);
+    }
 
-    // get dueDate() {
-    //     if (dueDate !== null){
-    //         return this.dueDate;
-    //     }
-    // }
-
-    // set dueDate(newdueDate) {
-    //     this._dueDate = newdueDate;
-    // }
-
-    // get priority() {
-    //     return this.priority;
-    // }
-
-    // set priority(newpriority) {
-    //     this._priority = newpriority;
-    // }
+    set taskPriority(priority) {
+        this.priority = priority;
+        pubsub.pub('taskUpdated', this.priority);
+    }
 }
