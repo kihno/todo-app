@@ -51,6 +51,30 @@
             </form>
         </div>
 
+        <div id="editTaskModal">
+            <form action="" onsubmit="event.preventDefault()">
+                <label for="editTitle">Title
+                    <input type="text" id="editTitle">
+                </label>
+                <label for="editDescription">Description
+                    <input type="text" id="editDescription">
+                </label>
+                <label for="editDueDate">Due Date
+                    <input type="date" id="editDueDate">
+                </label>
+                <div id="editPriority">
+                    <input type="radio" id="low" name="editPriority" value="low">
+                    <label for="low">Low</label><br>
+                    <input type="radio" id="medium" name="editPriority" value="medium">
+                    <label for="medium">Medium</label><br>
+                    <input type="radio" id="high" name="editPriority" value="high">
+                    <label for="high">High</label>
+                </div>
+                <button type="submit" id="save">Save</button>
+                <button id="cancel">Cancel</button>
+            </form>
+        </div>
+
         <div id='projectModal'>
             <form action="" onsubmit="event.preventDefault()">
                 <label for="projectName">Name
