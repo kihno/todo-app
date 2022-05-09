@@ -10,35 +10,37 @@ export class Tasks {
         this.project = project;
     }
 
-    get title() {
-        return this.title;
-    }
+    // get title() {
+    //     return this.title;
+    // }
 
-    set title(newTitle) {
-        this._title = newTitle;
-    }
+    // set title(newTitle) {
+    //     this._title = newTitle;
+    // }
    
-    get description() {
-        return this.description;
-    }
+    // get description() {
+    //     return this.description;
+    // }
 
-    set description(newdescription) {
-        this._description = newdescription;
-    }
+    // set description(newdescription) {
+    //     this._description = newdescription;
+    // }
 
-    get dueDate() {
-        return this.dueDate;
-    }
+    // get dueDate() {
+    //     if (dueDate !== null){
+    //         return this.dueDate;
+    //     }
+    // }
 
-    set dueDate(newdueDate) {
-        this._dueDate = newdueDate;
-    }
+    // set dueDate(newdueDate) {
+    //     this._dueDate = newdueDate;
+    // }
 
-    get priority() {
-        return this.priority;
-    }
+    // get priority() {
+    //     return this.priority;
+    // }
 
-    set priority(newpriority) {
-        this._priority = newpriority;
-    }
+    // set priority(newpriority) {
+    //     this._priority = newpriority;
+    // }
 }

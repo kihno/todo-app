@@ -1,7 +1,7 @@
 import {format, isWithinInterval, addDays, parseISO} from 'date-fns';
-import TrashIcon from './trash.svg';
-import EditIcon from './edit.svg';
-import HexIcon from './hex.svg';
+import TrashIcon from './images/trash.svg';
+import EditIcon from './images/edit.svg';
+import HexIcon from './images/hex.svg';
 import {user} from './user.js';
 import {pubsub} from './pubsub.js';
 import {Projects} from './projects.js';
@@ -46,34 +46,33 @@ export const events = (() => {
 
     //     renderProjectList();
     // }
-
-    let inbox = user.inbox;
-    let todayInbox = user.todayInbox;
-    let weekInbox = user.weekInbox;
-    let allProjects = user.allProjects;
-    let currentProject = inbox;
-
+ 
+    // let inbox = user.inbox;
+    // let todayInbox = user.todayInbox;
+    // let weekInbox = user.weekInbox;
+    // let allProjects = user.allProjects;
+    let currentProject = user.inbox;
 
     // Events
     inboxButton.addEventListener('click', () => {
         clearProject();
-        currentProject = inbox;
+        currentProject = user.inbox;
         taskButton.style.display = 'flex';
-        renderTasks(inbox.tasks);
+        renderTasks(user.inbox.tasks);
     });
 
     todayButton.addEventListener('click', () => {
         clearProject();
-        currentProject = inbox;
+        currentProject = user.inbox;
         taskButton.style.display = 'none';
-        renderTasks(todayInbox.tasks);
+        renderTasks(user.todayInbox.tasks);
     });
 
     weekButton.addEventListener('click', () => {
         clearProject();
-        currentProject = inbox;
+        currentProject = user.inbox;
         taskButton.style.display = 'none';
-        renderTasks(weekInbox.tasks);
+        renderTasks(user.weekInbox.tasks);
     });
 
     taskButton.addEventListener('click', () => {
@@ -81,7 +80,7 @@ export const events = (() => {
     });
 
     submit.addEventListener('click', () => {
-        const newTask = new Tasks(title.value, description.value, dueDate.value, priorityValue(), currentProject);
+        const newTask = new Tasks(title.value, description.value, dueDate.value, priorityValue(), currentProject.title);
         pushTask(newTask);
         taskModal.style.display = 'none';
     });
@@ -98,7 +97,7 @@ export const events = (() => {
         projectModal.style.display = 'none';
         projectName.value = '';
 
-        allProjects.push(newProject);
+        user.allProjects.push(newProject);
         pubsub.pub('projectAdded', newProject);
 
         clearProject();
@@ -111,7 +110,7 @@ export const events = (() => {
 
     //Functions
     function setStorage() {
-        localStorage.setItem(`allProjects`, JSON.stringify(allProjects));
+        localStorage.setItem(`allProjects`, JSON.stringify(user.allProjects));
         renderTasks(currentProject.tasks);
     }
 
@@ -175,10 +174,10 @@ export const events = (() => {
     }
 
     function pushTask(newTask) {
-        if (currentProject === inbox) {
-            inbox.addTask(newTask);
+        if (currentProject === user.inbox) {
+            user.inbox.addTask(newTask);
         } else  {
-            inbox.addTask(newTask);
+            user.inbox.addTask(newTask);
             currentProject.addTask(newTask);
         }
         pushToday(newTask);
@@ -186,27 +185,27 @@ export const events = (() => {
     }
 
     function pushToday(newTask) {
-        const todaysDate = format(new Date(), 'yyyy-MM-dd');
+        const todaysDate = format(new Date(), 'MM-dd-yyyy');
 
         if (newTask.dueDate === todaysDate) {
-            todayInbox.addTask(newTask);
-            weekInbox.addTask(newTask);
+            user.todayInbox.addTask(newTask);
+            user.weekInbox.addTask(newTask);
         }
     }
 
     function pushWeek(newTask) {
         if (isWithinInterval(parseISO(newTask.dueDate), {start: new Date, end: addDays(new Date(), 6)})) {
-            weekInbox.addTask(newTask);
+            user.weekInbox.addTask(newTask);
         }
     }
 
     function deleteProject() {
         let projectTitle = document.querySelector('.projectTitle');
 
-        allProjects.forEach(project => {
+        user.allProjects.forEach(project => {
             if (projectTitle.textContent === project.title) {
-                let index = allProjects.indexOf(project);
-                allProjects.splice(index,1);
+                let index = user.allProjects.indexOf(project);
+                user.allProjects.splice(index,1);
                 pubsub.pub('projectDeleted', project);
             }
         });
@@ -220,14 +219,17 @@ export const events = (() => {
         let taskDescription = taskUl.querySelector('.description').textContent;
         let taskDueDate = taskUl.querySelector('.dueDate').textContent;
 
-        allProjects.forEach(project => {
+        user.allProjects.forEach(project => {
             project.tasks.forEach(task => {
                 if (taskTitle === task.title && taskDescription === task.description && taskDueDate === task.dueDate) {
+                    console.log(project);
                     project.removeTask(task);
+                    // project.removeTask(task);
                     // let index = project.tasks.indexOf(task);
                     // project.tasks.splice(index,1);
                     // pubsub.pub('taskDeleted', project);
                 }
+                
             });
             
         });
@@ -235,8 +237,8 @@ export const events = (() => {
 
 
     function renderProjectList() {
-        for ( let i = 3; i < allProjects.length; i++) {
-            const newProject = new Projects(allProjects[i].title, allProjects[i].tasks);
+        for ( let i = 3; i < user.allProjects.length; i++) {
+            const newProject = new Projects(user.allProjects[i].title, user.allProjects[i].tasks);
             createProjectElement(newProject);
         }
     }
@@ -259,12 +261,14 @@ export const events = (() => {
                 hexIcon.classList.toggle('checked');
             });
 
-            for (const prop in task) {
+            for (let prop in task) {
                 const li = document.createElement('li');
                 li.className = prop;
 
-                if (prop === dueDate && dueDate !== undefined) {
+                if (prop === dueDate && dueDate !== null) {
                     li.textContent = format(parseISO(task[prop]), 'MM-dd-yyyy');
+                } else if (prop === project) {
+                    return
                 } else {
                     li.textContent = task[prop];
                 }
