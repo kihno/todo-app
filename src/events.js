@@ -98,7 +98,7 @@ export const events = (() => {
     }
 
     function priorityValue(priority) {
-        let value;
+        let value = '';
 
         for(let i = 0; i < priority.length; i++) {
             if (priority[i].checked)
@@ -223,9 +223,14 @@ export const events = (() => {
         let taskDescription = taskUl.querySelector('.description').textContent;
         let taskDueDate = taskUl.querySelector('.dueDate').textContent;
 
+        let reformatDate = '';
+        if (taskDueDate !== '') {
+            reformatDate = format(new Date(taskDueDate), 'yyyy-MM-dd');
+        }
+
         user.allProjects.forEach(project => {
             project.tasks.forEach(task => {
-                if (taskTitle === task.title && taskDescription === task.description && taskDueDate === task.dueDate) {
+                if (taskTitle === task.title && taskDescription === task.description && reformatDate === task.dueDate) {
                     project.removeTask(task);
                 }
             });
@@ -304,10 +309,13 @@ export const events = (() => {
                 const li = document.createElement('li');
                 li.className = prop;
 
-                if (prop === dueDate && dueDate !== null) {
+                if (prop === 'dueDate' && task[prop] !== "") {
                     li.textContent = format(parseISO(task[prop]), 'MM-dd-yyyy');
-                } else if (prop === project) {
-                    return
+                } else if (prop === 'priority') {
+                    li.className += ' ' + task[prop];
+                    li.textContent = task[prop];
+                } else if (prop === priority && priority === undefined) {
+                    li.textContent = '';
                 } else {
                     li.textContent = task[prop];
                 }
