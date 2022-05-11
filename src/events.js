@@ -18,10 +18,12 @@ export const events = (() => {
     const taskList = document.getElementById('taskList');
     const taskButton = document.getElementById('addTask');
     const submit = document.getElementById('submit');
+    const titleError =  document.getElementById('titleError');
     const projectButton = document.getElementById('newProject');
     const projectList = document.getElementById('projects');
     const projectName = document.getElementById('projectName');
     const projectSubmit = document.getElementById('projectSubmit');
+    const projectError = document.getElementById('projectError');
     const taskModal = document.getElementById('taskModal');
     const closeModal = document.getElementById('closeModal');
     // const editModal = document.getElementById('editTaskModal');
@@ -79,18 +81,7 @@ export const events = (() => {
 
     projectButton.addEventListener('click', toggleProjectModal);
 
-    projectSubmit.addEventListener('click', () => {
-        const newProject = new Projects(projectName.value);
-        currentProject = newProject;
-        taskButton.style.display = 'flex';
-
-        clearProject();
-        removeProjectClass();
-        toggleProjectModal();
-
-        user.allProjects.push(newProject);
-        pubsub.pub('projectAdded', newProject);
-    });
+    projectSubmit.addEventListener('click', validateProject);
 
     pubsub.sub('taskAdded', setStorage);
     pubsub.sub('taskDeleted', setStorage);
@@ -148,8 +139,31 @@ export const events = (() => {
             projectModal.style.display = 'block';
         } else {
             projectName.value = '';
+            clearProjectError();
             projectModal.style.display = 'none';
         }
+    }
+
+    function validateProject() {
+        if (projectName.value === '') {
+            projectError.textContent = 'Please enter project name';
+        } else {
+            const newProject = new Projects(projectName.value);
+            currentProject = newProject;
+            taskButton.style.display = 'flex';
+    
+            clearProject();
+            removeProjectClass();
+            toggleProjectModal();
+            clearProjectError();
+    
+            user.allProjects.push(newProject);
+            pubsub.pub('projectAdded', newProject);
+        }
+    }
+
+    function clearProjectError() {
+        projectError.textContent = '';
     }
 
     function clearProject() {

@@ -37,6 +37,13 @@ body {
     align-self: start;
 }
 
+
+#projectError {
+    margin-top: 5px;
+    color: red;
+    background-color: white;
+}
+
 #addTask {
     width: 120px;
     height: 50px;
