@@ -82,6 +82,7 @@ export const events = (() => {
     projectSubmit.addEventListener('click', () => {
         const newProject = new Projects(projectName.value);
         currentProject = newProject;
+        taskButton.style.display = 'flex';
 
         clearProject();
         removeProjectClass();

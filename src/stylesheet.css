@@ -7,7 +7,7 @@ body {
     width: 100vw;
     height: 100vh;
     display: grid;
-    grid: 1fr 4fr / 1fr 4fr;
+    grid: 1fr 4fr / 300px 4fr;
     font-family: 'Courier New', Courier, monospace;
 }
 
@@ -61,7 +61,6 @@ body {
     display: flex;
     gap:10px;
     flex-direction: column;
-    align-items: center;
 }
 
 .project {
@@ -85,6 +84,7 @@ body {
 
 .current {
     font-weight: bold;
+    color: #e65310;
     text-shadow: 1px 1px 3px black;
 }
 
@@ -94,6 +94,7 @@ body {
 }
 
 .delete {
+    height: 1em;
     display: none;
     float: right;
 }
@@ -107,18 +108,34 @@ form {
     border: 1px solid black;
 }
 
-#projectModal {
-    width: 100%;
-    background: white;
+#projectName {
+    width: 160px;
+    height: 30px;
+    border: none;
     border-radius: 5px;
-    border: 1px solid black;
 }
 
 #projectSubmit {
+    width: 30px;
+    height: 30px;
+    display: grid;
+    justify-content: center;
+    align-items: center;
     color: white;
     background-color: #e65310;
     border: none;
     border-radius: 3px;
+}
+
+#projectForm {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+#addProject {
+    width: 20px;
+    height: 20px;
 }
 
 .task, #taskHeader {
