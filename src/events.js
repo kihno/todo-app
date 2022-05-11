@@ -81,6 +81,7 @@ export const events = (() => {
 
     projectSubmit.addEventListener('click', () => {
         const newProject = new Projects(projectName.value);
+        clearProject();
         removeProjectClass();
 
         currentProject = newProject;
@@ -89,9 +90,6 @@ export const events = (() => {
 
         user.allProjects.push(newProject);
         pubsub.pub('projectAdded', newProject);
-
-        clearProject();
-        renderProjectList();
     });
 
     pubsub.sub('taskAdded', setStorage);
@@ -103,6 +101,7 @@ export const events = (() => {
     function setStorage() {
         localStorage.setItem(`allProjects`, JSON.stringify(user.allProjects));
         renderTasks(currentProject.tasks);
+        renderProjectList();
     }
 
     function priorityValue(priority) {
@@ -149,8 +148,12 @@ export const events = (() => {
 
     function createProjectElement(project) {
         const ul = document.createElement('ul');
+        ul.className = 'project';
+        if (project.title === currentProject.title) {
+            ul.classList.add('current');
+        }
+
         const li = document.createElement('li');
-        ul.className = 'project current';
         li.className = 'projectTitle';
         li.textContent = project.title || projectName.value;
         ul.appendChild(li);
@@ -297,7 +300,7 @@ export const events = (() => {
 
 
     function renderProjectList() {
-        for ( let i = 3; i < user.allProjects.length; i++) {
+        for ( let i = projectElements.length; i < user.allProjects.length; i++) {
             const newProject = new Projects(user.allProjects[i].title, user.allProjects[i].tasks);
             createProjectElement(newProject);
         }
