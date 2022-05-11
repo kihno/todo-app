@@ -95,8 +95,12 @@ form {
     justify-items: start;
 }
 
-#taskModal, #projectModal, #editTaskModal {
-    display: none;
+#taskModal {
+    border: 1px solid black;
+}
+
+#projectModal {
+    border: 1px solid black;
 }
 
 .task, #taskHeader {

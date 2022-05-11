@@ -22,6 +22,7 @@ export const events = (() => {
     const projectName = document.getElementById('projectName');
     const projectSubmit = document.getElementById('projectSubmit');
     const taskModal = document.getElementById('taskModal');
+    const closeModal = document.getElementById('closeModal');
     // const editModal = document.getElementById('editTaskModal');
     // const editTitle = document.getElementById('editTitle');
     // const editDescription = document.getElementById('editDescription');
@@ -65,28 +66,25 @@ export const events = (() => {
         renderTasks(user.weekInbox.tasks);
     });
 
-    taskButton.addEventListener('click', () => {
-        taskModal.style.display = 'block';
-    });
+    taskButton.addEventListener('click', toggleTaskModal);
+
+    closeModal.addEventListener('click', toggleTaskModal);
 
     submit.addEventListener('click', () => {
         const newTask = new Tasks(title.value, description.value, dueDate.value, priorityValue(priority), currentProject.title);
         pushTask(newTask);
-        taskModal.style.display = 'none';
+        toggleTaskModal();
     });
 
-    projectButton.addEventListener('click', () => {
-        projectModal.style.display = 'block';
-    });
+    projectButton.addEventListener('click', toggleProjectModal);
 
     projectSubmit.addEventListener('click', () => {
         const newProject = new Projects(projectName.value);
+        currentProject = newProject;
+
         clearProject();
         removeProjectClass();
-
-        currentProject = newProject;
-        projectModal.style.display = 'none';
-        projectName.value = '';
+        toggleProjectModal();
 
         user.allProjects.push(newProject);
         pubsub.pub('projectAdded', newProject);
@@ -133,6 +131,24 @@ export const events = (() => {
     //     editDescription.value = '';
     //     editDueDate.value = '';
     // }
+
+    function toggleTaskModal() {
+        if (taskModal.style.display === 'none') {
+            taskModal.style.display = 'block';
+        } else {
+            clearInput();
+            taskModal.style.display = 'none';
+        }
+    }
+
+    function toggleProjectModal() {
+        if (projectModal.style.display === 'none') {
+            projectModal.style.display = 'block';
+        } else {
+            projectName.value = '';
+            projectModal.style.display = 'none';
+        }
+    }
 
     function clearProject() {
         while (taskList.firstChild) {
@@ -300,7 +316,7 @@ export const events = (() => {
 
 
     function renderProjectList() {
-        for ( let i = projectElements.length; i < user.allProjects.length; i++) {
+        for ( let i = user.allProjects.length; i < user.allProjects.length; i++) {
             const newProject = new Projects(user.allProjects[i].title, user.allProjects[i].tasks);
             createProjectElement(newProject);
         }
