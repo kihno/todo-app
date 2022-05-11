@@ -19,14 +19,14 @@
         </ul>
         
         <div id="newProject">
-            <img src="../src/images/add.svg">
-            <p>New Project</p>
+            <img src="../src/images/add.svg" id="plusIcon">
+            <p>Project</p>
         </div>
 
         <div id='projectModal' style="display: none;">
             <form action="" onsubmit="event.preventDefault()">
-                <label for="projectName">Name
-                    <input type="text" id="projectName">
+                <label for="projectName">
+                    <input type="text" id="projectName" placeholder="Project Name">
                 </label>
                 <button type="submit" id="projectSubmit">Create Project</button>
             </form>
@@ -71,8 +71,8 @@
 
         <div id="taskList"></div>
         <div id="addTask">
-            <img  src="../src/images/add.svg">
-            <p>Add Task</p>
+            <img  src="../src/images/add.svg" id="plusIcon">
+            <p>Task</p>
         </div>
     </div>
 
