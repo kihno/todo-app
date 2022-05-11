@@ -1,5 +1,6 @@
 import {format, isWithinInterval, addDays, parseISO} from 'date-fns';
 import TrashIcon from './images/trash.svg';
+import TrashGreyIcon from './images/trash-grey.svg';
 // import EditIcon from './images/edit.svg';
 import HexIcon from './images/hex.svg';
 import {user} from './user.js';
@@ -316,7 +317,7 @@ export const events = (() => {
 
 
     function renderProjectList() {
-        for ( let i = user.allProjects.length; i < user.allProjects.length; i++) {
+        for ( let i = projectElements.length; i < user.allProjects.length; i++) {
             const newProject = new Projects(user.allProjects[i].title, user.allProjects[i].tasks);
             createProjectElement(newProject);
         }
@@ -365,12 +366,12 @@ export const events = (() => {
 
             // editIcon.addEventListener('click', editTask);
 
-            const trashIcon = new Image();
-            trashIcon.src = TrashIcon;
-            trashIcon.className = 'task-delete';
-            ul.appendChild(trashIcon);
+            const trashGreyIcon = new Image();
+            trashGreyIcon.src = TrashGreyIcon;
+            trashGreyIcon.className = 'task-delete';
+            ul.appendChild(trashGreyIcon);
 
-            trashIcon.addEventListener('click', deleteTask);
+            trashGreyIcon.addEventListener('click', deleteTask);
 
         });
         
