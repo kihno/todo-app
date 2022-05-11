@@ -33,11 +33,14 @@ export const events = (() => {
     const inboxButton = document.getElementById('inboxButton');
     const todayButton = document.getElementById('today');
     const weekButton = document.getElementById('week');
+    const projectElements = document.getElementsByClassName('project');
 
     let currentProject = user.inbox;
 
     // Events
     inboxButton.addEventListener('click', () => {
+        removeProjectClass();
+        inboxButton.classList.add('current');
         clearProject();
         currentProject = user.inbox;
         taskButton.style.display = 'flex';
@@ -45,6 +48,8 @@ export const events = (() => {
     });
 
     todayButton.addEventListener('click', () => {
+        removeProjectClass();
+        todayButton.classList.add('current');
         clearProject();
         currentProject = user.inbox;
         taskButton.style.display = 'none';
@@ -52,6 +57,8 @@ export const events = (() => {
     });
 
     weekButton.addEventListener('click', () => {
+        removeProjectClass();
+        weekButton.classList.add('current');
         clearProject();
         currentProject = user.inbox;
         taskButton.style.display = 'none';
@@ -74,7 +81,7 @@ export const events = (() => {
 
     projectSubmit.addEventListener('click', () => {
         const newProject = new Projects(projectName.value);
-        createProjectElement(newProject);
+        removeProjectClass();
 
         currentProject = newProject;
         projectModal.style.display = 'none';
@@ -84,6 +91,7 @@ export const events = (() => {
         pubsub.pub('projectAdded', newProject);
 
         clearProject();
+        renderProjectList();
     });
 
     pubsub.sub('taskAdded', setStorage);
@@ -133,10 +141,16 @@ export const events = (() => {
         }
     } 
 
+    function removeProjectClass() {
+        for (let i = 0; i < projectElements.length; i++) {
+            projectElements[i].classList.remove('current');
+        }
+    }
+
     function createProjectElement(project) {
         const ul = document.createElement('ul');
         const li = document.createElement('li');
-        ul.className = 'userProject';
+        ul.className = 'project current';
         li.className = 'projectTitle';
         li.textContent = project.title || projectName.value;
         ul.appendChild(li);
@@ -148,7 +162,7 @@ export const events = (() => {
 
         trashIcon.addEventListener('click', deleteProject); 
 
-        projectList.appendChild(ul);;
+        projectList.appendChild(ul);
 
         ul.addEventListener('mouseover', () => {
             ul.lastChild.style.display = 'inline';
@@ -159,8 +173,9 @@ export const events = (() => {
         });
 
         li.addEventListener('click', () => {
+            removeProjectClass();
+            ul.classList.add('current');
             currentProject = project;
-            console.log(currentProject);
             taskButton.style.display = 'flex';
             renderTasks(project.tasks);
         });
@@ -215,13 +230,14 @@ export const events = (() => {
         });
 
         projectUl.remove();
+        inboxButton.classList.add('current');
     }
 
     function deleteTask(e) {
         let taskUl = e.target.parentNode;
-        let taskTitle = taskUl.querySelector('.title').textContent;
-        let taskDescription = taskUl.querySelector('.description').textContent;
-        let taskDueDate = taskUl.querySelector('.dueDate').textContent;
+        let taskTitle = taskUl.querySelector('.task-title').textContent;
+        let taskDescription = taskUl.querySelector('.task-description').textContent;
+        let taskDueDate = taskUl.querySelector('.task-dueDate').textContent;
 
         let reformatDate = '';
         if (taskDueDate !== '') {
@@ -307,7 +323,7 @@ export const events = (() => {
 
             for (let prop in task) {
                 const li = document.createElement('li');
-                li.className = prop;
+                li.className = 'task-' + prop;
 
                 if (prop === 'dueDate' && task[prop] !== "") {
                     li.textContent = format(parseISO(task[prop]), 'MM-dd-yyyy');
@@ -332,7 +348,7 @@ export const events = (() => {
 
             const trashIcon = new Image();
             trashIcon.src = TrashIcon;
-            trashIcon.className = 'delete';
+            trashIcon.className = 'task-delete';
             ul.appendChild(trashIcon);
 
             trashIcon.addEventListener('click', deleteTask);
