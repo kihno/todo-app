@@ -3,6 +3,9 @@ import TrashIcon from './images/trash.svg';
 import TrashGreyIcon from './images/trash-grey.svg';
 // import EditIcon from './images/edit.svg';
 import HexIcon from './images/hex.svg';
+import LowPriority from './images/low-priority.png';
+import MediumPriority from './images/medium-priority.png';
+import HighPriority from './images/high-priority.png';
 import {user} from './user.js';
 import {pubsub} from './pubsub.js';
 import {Projects} from './projects.js';
@@ -82,13 +85,13 @@ export const events = (() => {
     pubsub.sub('projectDeleted', setStorage);
 
     //Functions
-    function setStorage() {
+    function setStorage(project) {
         localStorage.setItem(`allProjects`, JSON.stringify(user.allProjects));
-        renderAll();
+        renderAll(project);
     }
 
-    function renderAll() {
-        renderTasks(currentProject.tasks);
+    function renderAll(project) {
+        renderTasks(project);
         renderProjectList();
     }
 
@@ -355,7 +358,7 @@ export const events = (() => {
 
     function renderTasks(project) {
         clearProject();
-        // user.getStorage();
+        console.log(currentProject.tasks);
 
         project.forEach(task => {
             const ul = document.createElement('ul');
@@ -380,9 +383,21 @@ export const events = (() => {
                     li.textContent = format(parseISO(task[prop]), 'MM-dd-yyyy');
                 } else if (prop === 'priority') {
                     li.className += ' ' + task[prop];
-                    li.textContent = task[prop];
-                } else if (prop === priority && priority === undefined) {
-                    li.textContent = '';
+
+                    if (task['priority'] === 'low' ) {
+                        const lowPriority = new Image();
+                        lowPriority.src = LowPriority;
+                        li.appendChild(lowPriority);
+                    } else if (task['priority'] === 'medium' ) {
+                        const mediumPriority = new Image();
+                        mediumPriority.src = MediumPriority;
+                        li.appendChild(mediumPriority);
+                    } else if (task['priority'] === 'high' ) {
+                        const highPriority = new Image();
+                        highPriority.src = HighPriority;
+                        li.appendChild(highPriority);
+                    }
+
                 } else {
                     li.textContent = task[prop];
                 }

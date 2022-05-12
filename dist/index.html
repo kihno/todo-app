@@ -47,14 +47,16 @@
         </ul>
 
         <div id="taskList"></div>
-        <div id="addTask">
-            <img  src="../src/images/add.svg" id="plusIcon">
-            <p>Task</p>
+        <div id="taskButtonContainer">
+            <div id="addTask">
+                <img  src="../src/images/add.svg" id="plusIcon">
+                <p>Task</p>
+            </div>
         </div>
 
         <div id="taskModal" style="display: none;">
             <form action="" onsubmit="event.preventDefault()" id="taskForm">
-                
+
                 <label for="title" id="titleLabel">Title</label>
                 <label for="description" id="descriptionLabel">Description</label>
                 <label for="dueDate" id="dueDateLabel">Due Date</label>
