@@ -1,3 +1,4 @@
+/* Body */
 body, h1, p, ul, li {
     margin: 0;
     padding: 0;
@@ -11,49 +12,11 @@ body {
     font-family: 'Courier New', Courier, monospace;
 }
 
-#logo {
-    width: 30%;
-}
-
 #inboxButton, #today, #week, #projects>ul, button, .checkbox, .edit, .delete, .task-delete, #newProject, #addTask {
     cursor: pointer;
 }
 
-#newProject, #addTask {
-    padding: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    color: white;
-    font-weight: bold;
-    font-size: 135%;
-    background-color: #e65310;
-    border-radius: 10px;
-}
-
-#newProject {
-    width: 160px;
-    height: 50px;
-    align-self: start;
-}
-
-
-#projectError {
-    margin-top: 5px;
-    color: red;
-    background-color: white;
-}
-
-#addTask {
-    width: 120px;
-    height: 50px;
-    margin: 10px;
-}
-
-#plusIcon {
-    height: 90%;
-}
-
+/* Header */
 #header {
     background-color: #000a4e;
     display: flex;
@@ -61,6 +24,11 @@ body {
     grid-area: 1 / 1 / 2 / 3;
 }
 
+#logo {
+    width: 500px;
+}
+
+/* Sidebar */
 #sidebar {
     background: rgb(92, 88, 88);
     grid-area: 2 / 1 / 3 / 2;
@@ -70,16 +38,31 @@ body {
     flex-direction: column;
 }
 
-.project {
-    color: white;
-    list-style: none;
-    font-size: 1.6rem;
+#projects {
+    width: 100%;
     display: grid;
     gap: 10px;
 }
 
-#projects {
-    width: 100%;
+#projects>ul {
+    display: flex;
+    align-items: center;
+}
+
+.delete {
+    height: 1em;
+    display: none;
+    float: right;
+}
+
+.delete:hover {
+    content: url('./images/trash-black.svg');
+}
+
+.project {
+    color: white;
+    list-style: none;
+    font-size: 1.6rem;
     display: grid;
     gap: 10px;
 }
@@ -95,69 +78,27 @@ body {
     text-shadow: 1px 1px 3px black;
 }
 
-#projects>ul {
+#newProject {
+    width: 160px;
+    height: 50px;
+    align-self: start;
+}
+
+#newProject:hover {
+    width: 162px;
+    height: 52px;
+    box-shadow: 1px 1px 5px black;
+}
+#newProject:active {
+    width: 159px;
+    height: 49px;
+    box-shadow: none;
+}
+
+#projectForm {
     display: flex;
     align-items: center;
-}
-
-.delete {
-    height: 1em;
-    display: none;
-    float: right;
-}
-
-form {
-    display: grid;
-    justify-items: start;
-}
-
-#taskModal {
-    border: 1px solid black;
-    position: fixed;
-    flex-direction: column;
-    gap: 10px;
-    width: 400px;
-    height: 300px;
-    padding: 20px;
-    background-color: white;
-}
-
-#titleError {
-    font-size: 12px;
-    position: absolute;
-    right: 5px;
-    color: red;
-}
-
-#closeModal {
-    font-size: 30px;
-    color:rgb(92, 88, 88);
-    align-self: flex-end;
-}
-
-#taskForm {
-    display: grid;
-    gap: 10px;
-}
-
-#submit {
-    color: white;
-    background-color: #e65310;
-    border: none;
-    width: 50px;
-    height: 50px;
-    border-radius: 3px;
-}
-
-#submitIcon {
-    width: 40px;
-    height: 40px;
-}
-
-#closeModal:hover,
-#closeModal:focus {
-    color: black;
-    cursor: pointer;
+    gap: 5px;
 }
 
 #projectName {
@@ -165,6 +106,12 @@ form {
     height: 30px;
     border: none;
     border-radius: 5px;
+}
+
+#projectError {
+    margin-top: 5px;
+    color: red;
+    background-color: white;
 }
 
 #projectSubmit {
@@ -179,37 +126,160 @@ form {
     border-radius: 3px;
 }
 
-#projectForm {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
 #addProject {
     width: 20px;
     height: 20px;
 }
 
+#newProject, #addTask {
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    color: white;
+    font-weight: bold;
+    font-size: 135%;
+    background-color: #e65310;
+    border-radius: 10px;
+}
+
+/* Main */
 .task, #taskHeader {
     list-style: none;
     display: grid;
     align-items: center;
-    grid-template-columns: 1fr 3fr 4fr 2fr 2fr 2fr 1fr;
-    gap:  5px;
+    grid-template-columns: 1fr 3fr 4fr 2fr 1.2fr 1fr 1fr;
+    gap:  10px;
     grid-auto-flow: column;
     padding: 10px;
-    border: 1px solid black;
+}
+
+#taskHeader {
+    border-bottom: 2px solid black;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.task {
+    border-bottom: 1px solid black;
+    padding: 10px;
+}
+
+#taskList {
+    padding: 10px;
 }
 
 .checkbox, .checked {
-    height: 24px;
+    height: 30px;
     justify-self: end;
-}
-
-.title {
-    font-weight: bold;
 }
 
 .checked {
     background-image: url(./images/checkHex.svg);
+}
+
+.task-title {
+    font-weight: bold;
+}
+
+.task-delete {
+    height: 30px;
+    float: right;
+}
+
+.task-delete:hover {
+    content: url('./images/trash-black.svg');
+}
+
+#addTask {
+    width: 120px;
+    height: 50px;
+    margin: 10px;
+}
+
+#addTask:hover {
+    width: 122px;
+    height: 52px;
+    box-shadow: 1px 1px 5px black;
+}
+#addTask:active {
+    width: 119px;
+    height: 49px;
+    box-shadow: none;
+}
+
+#plusIcon {
+    height: 90%;
+}
+
+#taskModal {
+    border: 1px solid black;
+    padding: 10px;
+    width: 100%;
+    background-color: white;
+}
+
+#taskForm {
+    width: 100%;
+    display: grid;
+    align-items: center;
+    grid: 1fr 2fr 1fr / 1fr 3fr 3.8fr 2fr 1.2fr 1fr 1fr;
+    column-gap: 10px;
+    grid-auto-flow: column;
+}
+
+#titleLabel {
+    grid-area: 1 / 2 / 2 / 3;
+}
+
+#descriptionLabel {
+    grid-area: 1 / 3 / 2 / 4;
+}
+
+#dueDateLabel {
+    grid-area: 1 / 4 / 2 / 5;
+}
+
+#priorityLabel {
+    grid-area: 1 / 5 / 2 / 6;
+}
+
+#title {
+    grid-area: 2 / 2 / 3 / 3;
+    align-self: end; 
+}
+
+#titleError {
+    font-size: 12px;
+    grid-area: 3 / 2 / 4 / 3;
+    color: red;
+}
+
+#description {
+    grid-area: 2 / 3 / 4 / 4; 
+}
+
+#dueDate {
+    width: 90%;
+    grid-area: 2 / 4 / 3 / 5; 
+    align-self: end;
+}
+
+#priority {
+    grid-area: 2 / 5 / 4 / 6; 
+}
+
+#submit {
+    grid-area: 1 / 6 / 4 / 7; 
+    color: white;
+    background-color: #e65310;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 3px;
+}
+
+#submitIcon {
+    width: 40px;
+    height: 40px;
 }

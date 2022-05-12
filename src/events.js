@@ -25,7 +25,6 @@ export const events = (() => {
     const projectSubmit = document.getElementById('projectSubmit');
     const projectError = document.getElementById('projectError');
     const taskModal = document.getElementById('taskModal');
-    const closeModal = document.getElementById('closeModal');
     // const editModal = document.getElementById('editTaskModal');
     // const editTitle = document.getElementById('editTitle');
     // const editDescription = document.getElementById('editDescription');
@@ -71,8 +70,6 @@ export const events = (() => {
 
     taskButton.addEventListener('click', toggleTaskModal);
 
-    closeModal.addEventListener('click', toggleTaskModal);
-
     submit.addEventListener('click', validateTask);
 
     projectButton.addEventListener('click', toggleProjectModal);
@@ -87,6 +84,10 @@ export const events = (() => {
     //Functions
     function setStorage() {
         localStorage.setItem(`allProjects`, JSON.stringify(user.allProjects));
+        renderAll();
+    }
+
+    function renderAll() {
         renderTasks(currentProject.tasks);
         renderProjectList();
     }
@@ -155,6 +156,7 @@ export const events = (() => {
             clearProjectError();
     
             user.allProjects.push(newProject);
+            user.setStorage();
             pubsub.pub('projectAdded', newProject);
         }
     }
@@ -272,6 +274,7 @@ export const events = (() => {
 
                 let index = user.allProjects.indexOf(project);
                 user.allProjects.splice(index,1);
+                user.setStorage();
                 pubsub.pub('projectDeleted', project);
             }
         });
@@ -352,7 +355,8 @@ export const events = (() => {
 
     function renderTasks(project) {
         clearProject();
-        
+        // user.getStorage();
+
         project.forEach(task => {
             const ul = document.createElement('ul');
             ul.className = 'task';

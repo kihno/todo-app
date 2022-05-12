@@ -35,32 +35,6 @@
     </div>
 
     <div id="main">
-        
-        <div id="taskModal" style="display: none;">
-            <span id="closeModal">&times;</span>
-            <form action="" onsubmit="event.preventDefault()" id="taskForm">
-                <label for="title">Title
-                    <input type="text" id="title">
-                </label>
-                <div id="titleError"></div>
-                <label for="description">Description
-                    <input type="text" id="description">
-                </label>
-                <label for="dueDate">Due Date
-                    <input type="date" id="dueDate">
-                </label>
-                <div id="priority">
-                    <p>Priority:</p>
-                    <input type="radio" id="low" name="priority" value="low">
-                    <label for="low">Low</label><br>
-                    <input type="radio" id="medium" name="priority" value="medium">
-                    <label for="medium">Medium</label><br>
-                    <input type="radio" id="high" name="priority" value="high">
-                    <label for="high">High</label>
-                </div>
-                <button type="submit" id="submit"><img src="../src/images/add.svg" alt="Add" id="submitIcon"></button>
-            </form>
-        </div>
 
         <ul id="taskHeader">
             <li></li>
@@ -76,6 +50,32 @@
         <div id="addTask">
             <img  src="../src/images/add.svg" id="plusIcon">
             <p>Task</p>
+        </div>
+
+        <div id="taskModal" style="display: none;">
+            <form action="" onsubmit="event.preventDefault()" id="taskForm">
+                
+                <label for="title" id="titleLabel">Title</label>
+                <label for="description" id="descriptionLabel">Description</label>
+                <label for="dueDate" id="dueDateLabel">Due Date</label>
+                <label for="priority" id="priorityLabel">Priority</label>
+        
+                <input type="text" id="title" placeholder="Title">
+                <div id="titleError"></div>
+                <textarea type="text" id="description" placeholder="Description"></textarea>
+                <input type="date" id="dueDate">
+            
+                <div id="priority">
+                    <input type="radio" id="low" name="priority" value="low">
+                    <label for="low">Low</label><br>
+                    <input type="radio" id="medium" name="priority" value="medium">
+                    <label for="medium">Medium</label><br>
+                    <input type="radio" id="high" name="priority" value="high">
+                    <label for="high">High</label>
+                </div>
+                <button type="submit" id="submit"><img src="../src/images/add.svg" alt="Add" id="submitIcon"></button>
+
+            </form>
         </div>
     </div>
 
