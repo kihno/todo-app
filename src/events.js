@@ -73,11 +73,7 @@ export const events = (() => {
 
     closeModal.addEventListener('click', toggleTaskModal);
 
-    submit.addEventListener('click', () => {
-        const newTask = new Tasks(title.value, description.value, dueDate.value, priorityValue(priority), currentProject.title);
-        pushTask(newTask);
-        toggleTaskModal();
-    });
+    submit.addEventListener('click', validateTask);
 
     projectButton.addEventListener('click', toggleProjectModal);
 
@@ -127,9 +123,10 @@ export const events = (() => {
 
     function toggleTaskModal() {
         if (taskModal.style.display === 'none') {
-            taskModal.style.display = 'block';
+            taskModal.style.display = 'flex';
         } else {
             clearInput();
+            clearTitleError();
             taskModal.style.display = 'none';
         }
     }
@@ -164,6 +161,21 @@ export const events = (() => {
 
     function clearProjectError() {
         projectError.textContent = '';
+    }
+
+    function validateTask() {
+        if (title.value === '') {
+            titleError.textContent = 'Please enter task name'
+        } else {
+            const newTask = new Tasks(title.value, description.value, dueDate.value, priorityValue(priority), currentProject.title);
+            pushTask(newTask);
+            toggleTaskModal();
+            clearTitleError();
+        }
+    }
+
+    function clearTitleError() {
+        titleError.textContent = '';
     }
 
     function clearProject() {
