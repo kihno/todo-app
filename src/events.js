@@ -272,7 +272,14 @@ export const events = (() => {
                 user.allProjects.forEach(project => {
                     project.tasks.forEach(task => {
                         if (task.project === deadProject) {
-                            project.removeTask(task)
+                            project.removeTask(task);
+                            user.allProjects.forEach(project => {
+                                project.tasks.forEach(task => {
+                                    if (task.project === deadProject) {
+                                        project.removeTask(task)
+                                    }
+                                });
+                            });
                         }
                     });
                 });
@@ -289,7 +296,6 @@ export const events = (() => {
     }
 
     function deleteTask(e) {
-        console.log(currentProject);
         let taskUl = e.target.parentNode;
         let taskTitle = taskUl.querySelector('.task-title').textContent;
         let taskDescription = taskUl.querySelector('.task-description').textContent;

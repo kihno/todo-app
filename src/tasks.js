@@ -1,5 +1,3 @@
-import {pubsub} from './pubsub.js';
-
 export class Tasks {
     
     constructor(title, description, dueDate, priority, project) {
