@@ -253,6 +253,7 @@ export const events = (() => {
         user.allProjects.forEach(project => {
             if (deadProject === project.title) {
 
+                //Running allProjects search/removeTask twice because removing task shifts index and tasks were being missed.
                 user.allProjects.forEach(project => {
                     project.tasks.forEach(task => {
                         if (task.project === deadProject) {
