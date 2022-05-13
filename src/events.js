@@ -41,7 +41,7 @@ export const events = (() => {
     const weekButton = document.getElementById('week');
     const projectElements = document.getElementsByClassName('project');
 
-    let currentProject = user.inbox;
+    let currentProject = new Projects(user.inbox.title, user.inbox.tasks);
 
     // Events
     inboxButton.addEventListener('click', () => {
@@ -79,20 +79,24 @@ export const events = (() => {
 
     projectSubmit.addEventListener('click', validateProject);
 
-    pubsub.sub('taskAdded', setStorage);
-    pubsub.sub('taskDeleted', setStorage);
-    pubsub.sub('projectAdded', setStorage);
-    pubsub.sub('projectDeleted', setStorage);
+    pubsub.sub('taskAdded', renderMain);
+    pubsub.sub('taskDeleted', renderMain);
+    pubsub.sub('projectAdded', renderSidebar);
+    pubsub.sub('projectDeleted', renderSidebar);
 
     //Functions
-    function setStorage(project) {
+    function setStorage() {
         localStorage.setItem(`allProjects`, JSON.stringify(user.allProjects));
-        renderAll(project);
     }
 
-    function renderAll(project) {
-        renderTasks(project);
+    function renderSidebar() {
+        setStorage();
         renderProjectList();
+    }
+
+    function renderMain(project) {
+        setStorage();
+        renderTasks(project);
     }
 
     function priorityValue(priority) {
@@ -149,8 +153,7 @@ export const events = (() => {
         if (projectName.value === '') {
             projectError.textContent = 'Please enter project name';
         } else {
-            const newProject = new Projects(projectName.value);
-            currentProject = newProject;
+            currentProject = new Projects(projectName.value);
             taskButton.style.display = 'flex';
     
             clearProject();
@@ -158,9 +161,8 @@ export const events = (() => {
             toggleProjectModal();
             clearProjectError();
     
-            user.allProjects.push(newProject);
-            user.setStorage();
-            pubsub.pub('projectAdded', newProject);
+            user.allProjects.push(currentProject);
+            pubsub.pub('projectAdded', currentProject);
         }
     }
 
@@ -227,16 +229,16 @@ export const events = (() => {
         li.addEventListener('click', () => {
             removeProjectClass();
             ul.classList.add('current');
-            currentProject = project;
+            currentProject = new Projects(project.title, project.tasks);
             taskButton.style.display = 'flex';
             renderTasks(project.tasks);
         });
     }
 
     function pushTask(newTask) {
-        if (currentProject === user.inbox) {
+        if (currentProject.title === 'inbox') {
             user.inbox.addTask(newTask);
-        } else  {
+        } else {
             user.inbox.addTask(newTask);
             currentProject.addTask(newTask);
         }
@@ -277,16 +279,17 @@ export const events = (() => {
 
                 let index = user.allProjects.indexOf(project);
                 user.allProjects.splice(index,1);
-                user.setStorage();
                 pubsub.pub('projectDeleted', project);
             }
         });
 
         projectUl.remove();
         inboxButton.classList.add('current');
+        renderTasks(user.inbox.tasks);
     }
 
     function deleteTask(e) {
+        console.log(currentProject);
         let taskUl = e.target.parentNode;
         let taskTitle = taskUl.querySelector('.task-title').textContent;
         let taskDescription = taskUl.querySelector('.task-description').textContent;
@@ -304,6 +307,10 @@ export const events = (() => {
                 }
             });
         });
+    }
+
+    function checkAllTasks() {
+
     }
 
     // function updateTask(title, description, dueDate, priority, edittedTitle, edittedDescription, edittedDueDate, edittedPriority) {
@@ -358,7 +365,6 @@ export const events = (() => {
 
     function renderTasks(project) {
         clearProject();
-        console.log(currentProject.tasks);
 
         project.forEach(task => {
             const ul = document.createElement('ul');
@@ -373,6 +379,7 @@ export const events = (() => {
         
             hexIcon.addEventListener('click', () => {
                 hexIcon.classList.toggle('checked');
+                checkAllTasks();
             });
 
             for (let prop in task) {

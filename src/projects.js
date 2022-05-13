@@ -10,14 +10,14 @@ export class Projects {
 
     addTask(task) {
         this.tasks.push(task);
-        user.setStorage();
+        // user.setStorage();
         pubsub.pub('taskAdded', this.tasks);
     }
 
     removeTask(task) {
         let index = this.tasks.indexOf(task);
         this.tasks.splice(index,1);
-        user.setStorage();
+        // user.setStorage();
         pubsub.pub('taskDeleted', this.tasks);
     }
 }
