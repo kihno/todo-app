@@ -1,5 +1,4 @@
 import {Projects} from './projects';
-import { pubsub } from './pubsub';
 
 export const user = {
     inbox: new Projects('inbox'),
@@ -9,7 +8,7 @@ export const user = {
 
     init() {
 
-        if (JSON.parse(localStorage.getItem('allProjects'))) {
+        if (JSON.parse(localStorage.getItem('allProjects')) !== null) {
 
             let storedProjects = JSON.parse(localStorage.getItem('allProjects'));
             

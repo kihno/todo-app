@@ -169,8 +169,9 @@ body {
     padding: 10px;
 }
 
-.checkbox, .checked {
+.task-complete, .checked {
     height: 30px;
+    width: 30px;
     justify-self: end;
 }
 

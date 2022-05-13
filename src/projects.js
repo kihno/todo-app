@@ -1,5 +1,4 @@
 import {pubsub} from './pubsub.js';
-import { user } from './user.js';
 
 export class Projects {
 

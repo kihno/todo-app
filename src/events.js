@@ -41,7 +41,8 @@ export const events = (() => {
     const weekButton = document.getElementById('week');
     const projectElements = document.getElementsByClassName('project');
 
-    let currentProject = new Projects(user.inbox.title, user.inbox.tasks);
+    user.init();
+    let currentProject = user.inbox;
 
     // Events
     inboxButton.addEventListener('click', () => {
@@ -315,8 +316,22 @@ export const events = (() => {
         });
     }
 
-    function checkAllTasks() {
+    function checkTask(e) {
+        let checkbox = e.target;
+        let task = e.target.parentNode.parentNode;
+        let index = task.getAttribute('data-index');
 
+        checkbox.classList.toggle('checked');
+
+        if (currentProject.tasks[index].complete === false) {
+            currentProject.tasks[index].complete = true;
+            renderMain(currentProject.tasks);
+            
+        } else {
+            currentProject.tasks[index].complete = false;
+            renderMain(currentProject.tasks);
+            
+        }
     }
 
     // function updateTask(title, description, dueDate, priority, edittedTitle, edittedDescription, edittedDueDate, edittedPriority) {
@@ -381,18 +396,21 @@ export const events = (() => {
             const hexIcon = new Image();
             hexIcon.src = HexIcon;
             hexIcon.className = 'checkbox';
-            ul.appendChild(hexIcon);
         
-            hexIcon.addEventListener('click', () => {
-                hexIcon.classList.toggle('checked');
-                checkAllTasks();
+            hexIcon.addEventListener('click', (e) => {
+                checkTask(e);
             });
 
             for (let prop in task) {
                 const li = document.createElement('li');
                 li.className = 'task-' + prop;
 
-                if (prop === 'dueDate' && task[prop] !== "") {
+                if (prop === 'complete') {
+                    li.appendChild(hexIcon);
+                    if (task['complete'] === true) {
+                        hexIcon.classList.toggle('checked');
+                    }
+                } else if (prop === 'dueDate' && task[prop] !== "") {
                     li.textContent = format(parseISO(task[prop]), 'MM-dd-yyyy');
                 } else if (prop === 'priority') {
                     li.className += ' ' + task[prop];
@@ -411,7 +429,11 @@ export const events = (() => {
                         li.appendChild(highPriority);
                     }
 
-                } else {
+                } else if (prop === 'project') {
+                    if (prop['project'] === 'inbox') {
+                        li.textContent = '';
+                    }
+                }else {
                     li.textContent = task[prop];
                 }
                 
