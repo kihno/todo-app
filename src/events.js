@@ -1,7 +1,6 @@
 import {format, isWithinInterval, addDays, parseISO} from 'date-fns';
 import TrashIcon from './images/trash.svg';
 import TrashGreyIcon from './images/trash-grey.svg';
-// import EditIcon from './images/edit.svg';
 import HexIcon from './images/hex.svg';
 import LowPriority from './images/low-priority.png';
 import MediumPriority from './images/medium-priority.png';
@@ -28,13 +27,6 @@ export const events = (() => {
     const projectSubmit = document.getElementById('projectSubmit');
     const projectError = document.getElementById('projectError');
     const taskModal = document.getElementById('taskModal');
-    // const editModal = document.getElementById('editTaskModal');
-    // const editTitle = document.getElementById('editTitle');
-    // const editDescription = document.getElementById('editDescription');
-    // const editDueDate = document.getElementById('editDueDate');
-    // const editPriority = document.getElementsByName('editPriority');
-    // const saveButton = document.getElementById('save');
-    // const cancelButton = document.getElementById('cancel');
     const projectModal = document.getElementById('projectModal');
     const inboxButton = document.getElementById('inboxButton');
     const todayButton = document.getElementById('today');
@@ -120,16 +112,6 @@ export const events = (() => {
         dueDate.value = '';
     }
 
-    // function clearEditInput() {
-    //     for (let i = 0; i < editPriority.length; i++) {
-    //         editPriority[i].checked = false;
-    //     }
-
-    //     editTitle.value = '';
-    //     editDescription.value = '';
-    //     editDueDate.value = '';
-    // }
-
     function toggleTaskModal() {
         if (taskModal.style.display === 'none') {
             taskModal.style.display = 'flex';
@@ -154,7 +136,8 @@ export const events = (() => {
         if (projectName.value === '') {
             projectError.textContent = 'Please enter project name';
         } else {
-            currentProject = new Projects(projectName.value);
+            let newProject = new Projects(projectName.value);
+            currentProject = newProject;
             taskButton.style.display = 'flex';
     
             clearProject();
@@ -162,8 +145,8 @@ export const events = (() => {
             toggleProjectModal();
             clearProjectError();
     
-            user.allProjects.push(currentProject);
-            pubsub.pub('projectAdded', currentProject);
+            user.allProjects.push(newProject);
+            pubsub.pub('projectAdded', newProject);
         }
     }
 
@@ -230,7 +213,7 @@ export const events = (() => {
         li.addEventListener('click', () => {
             removeProjectClass();
             ul.classList.add('current');
-            currentProject = new Projects(project.title, project.tasks);
+            currentProject = project;
             taskButton.style.display = 'flex';
             renderTasks(project.tasks);
         });
@@ -240,7 +223,7 @@ export const events = (() => {
         if (currentProject.title === 'inbox') {
             user.inbox.addTask(newTask);
         } else {
-            user.inbox.addTask(newTask);
+            user.inbox.tasks.push(newTask);
             currentProject.addTask(newTask);
         }
         pushToday(newTask);
@@ -265,10 +248,10 @@ export const events = (() => {
     function deleteProject(e) {
         let projectUl = e.target.parentNode;
         let projectTitle = projectUl.querySelector('.projectTitle');
+        let deadProject = projectTitle.textContent;
 
         user.allProjects.forEach(project => {
-            if (projectTitle.textContent === project.title) {
-                let deadProject = project.title;
+            if (deadProject === project.title) {
 
                 user.allProjects.forEach(project => {
                     project.tasks.forEach(task => {
@@ -291,9 +274,13 @@ export const events = (() => {
             }
         });
 
+        if (currentProject.title === deadProject) {
+            currentProject = user.inbox;
+        }
+    
         projectUl.remove();
         inboxButton.classList.add('current');
-        renderTasks(user.inbox.tasks);
+        renderTasks(currentProject.tasks);
     }
 
     function deleteTask(e) {
@@ -333,49 +320,6 @@ export const events = (() => {
             
         }
     }
-
-    // function updateTask(title, description, dueDate, priority, edittedTitle, edittedDescription, edittedDueDate, edittedPriority) {
-    //     user.allProjects.forEach(project => {
-    //         project.tasks.forEach(task => {
-    //             if (title === task.title && description === task.description && dueDate === task.dueDate && priority === task.priority) {
-    //                 task.taskTitle = edittedTitle;
-    //                 task.taskDescription = edittedDescription;
-    //                 task.taskDueDate = edittedDueDate;
-    //                 task.taskPriority = edittedPriority;
-    //             }
-    //         });
-    //     });
-    // }
-
-    // function editTask(e) {
-    //     let taskUl = e.target.parentNode;
-    //     let taskTitle = taskUl.querySelector('.title').textContent;
-    //     let taskDescription = taskUl.querySelector('.description').textContent;
-    //     let taskDueDate = taskUl.querySelector('.dueDate').textContent;
-    //     let taskPriority = taskUl.querySelector('.priority').textContent;
-
-    //     editModal.style.display = 'block';
-    //     editTitle.value = taskTitle;
-    //     editDescription.value = taskDescription;
-    //     editDueDate.value = taskDueDate;
-    //     for (const radio of editPriority) {
-    //         if (radio.value === taskPriority) {
-    //             radio.checked = true;
-    //         }
-    //     }
-
-    //     saveButton.addEventListener('click', () => {
-    //         updateTask(taskTitle, taskDescription, taskDueDate, taskPriority, editTitle.value, editDescription.value, editDueDate.value, priorityValue(editPriority))
-    //         clearEditInput();
-    //         editModal.style.display = 'none';
-    //     });
-
-    //     cancelButton.addEventListener('click', () => {
-    //         clearEditInput();
-    //         editModal.style.display = 'none';
-    //     });
-    // }
-
 
     function renderProjectList() {
         for ( let i = projectElements.length; i < user.allProjects.length; i++) {
@@ -428,24 +372,14 @@ export const events = (() => {
                         highPriority.src = HighPriority;
                         li.appendChild(highPriority);
                     }
-
-                } else if (prop === 'project') {
-                    if (prop['project'] === 'inbox') {
-                        li.textContent = '';
-                    }
-                }else {
+                } else if (prop === 'project' && task[prop] === 'inbox') {
+                    li.textContent = '';
+                } else {
                     li.textContent = task[prop];
                 }
                 
                 ul.appendChild(li);
             }
-
-            // const editIcon = new Image();
-            // editIcon.src = EditIcon;
-            // editIcon.className = 'edit';
-            // ul.appendChild(editIcon);
-
-            // editIcon.addEventListener('click', editTask);
 
             const trashGreyIcon = new Image();
             trashGreyIcon.src = TrashGreyIcon;
