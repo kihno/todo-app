@@ -179,6 +179,19 @@ body {
     background-image: url(./images/checkHex.svg);
 }
 
+.complete {
+    background-color: lightgrey;
+}
+
+hr {
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    border: none;
+    background-color: black;
+    opacity: 0.3;
+}
+
 .task-title {
     font-weight: bold;
 }

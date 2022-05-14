@@ -310,6 +310,7 @@ export const events = (() => {
         let index = task.getAttribute('data-index');
 
         checkbox.classList.toggle('checked');
+        task.classList.toggle('complete');
 
         if (currentProject.tasks[index].complete === false) {
             currentProject.tasks[index].complete = true;
@@ -354,6 +355,9 @@ export const events = (() => {
                     li.appendChild(hexIcon);
                     if (task['complete'] === true) {
                         hexIcon.classList.toggle('checked');
+                        ul.classList.toggle('complete');
+                        let hr = document.createElement('hr');
+                        ul.appendChild(hr);
                     }
                 } else if (prop === 'dueDate' && task[prop] !== "") {
                     li.textContent = format(parseISO(task[prop]), 'MM-dd-yyyy');
