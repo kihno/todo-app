@@ -44,24 +44,29 @@ export const events = (() => {
         currentProject = user.inbox;
         taskButton.style.display = 'flex';
         renderTasks(user.inbox.tasks);
+        clearModals();
     });
 
     todayButton.addEventListener('click', () => {
         removeProjectClass();
         todayButton.classList.add('current');
         clearProject();
-        currentProject = user.inbox;
+        currentProject = user.todayInbox;
         taskButton.style.display = 'none';
         renderTasks(user.todayInbox.tasks);
+        clearModals();
+        noTasksDue();
     });
 
     weekButton.addEventListener('click', () => {
         removeProjectClass();
         weekButton.classList.add('current');
         clearProject();
-        currentProject = user.inbox;
+        currentProject = user.weekInbox;
         taskButton.style.display = 'none';
         renderTasks(user.weekInbox.tasks);
+        clearModals();
+        noTasksDue();
     });
 
     taskButton.addEventListener('click', toggleTaskModal);
@@ -85,11 +90,12 @@ export const events = (() => {
     function renderSidebar() {
         setStorage();
         renderProjectList();
+        renderTasks(currentProject.tasks);
     }
 
-    function renderMain(project) {
+    function renderMain() {
         setStorage();
-        renderTasks(project);
+        renderTasks(currentProject.tasks);
     }
 
     function priorityValue(priority) {
@@ -113,22 +119,57 @@ export const events = (() => {
     }
 
     function toggleTaskModal() {
+        clearProjectModal();
+
         if (taskModal.style.display === 'none') {
             taskModal.style.display = 'flex';
         } else {
+            clearTaskModal();
+        }
+    }
+
+    function clearTaskModal() {
+        if (taskModal.style.display === 'flex') {
             clearInput();
             clearTitleError();
             taskModal.style.display = 'none';
         }
     }
 
-    function toggleProjectModal() {
-        if (projectModal.style.display === 'none') {
-            projectModal.style.display = 'block';
-        } else {
+    function clearProjectModal() {
+        if (projectModal.style.display === 'block') {
             projectName.value = '';
             clearProjectError();
             projectModal.style.display = 'none';
+        }
+    }
+
+    function clearModals() {
+        clearTaskModal();
+        clearProjectModal();
+    }
+
+    function toggleProjectModal() {
+        clearTaskModal();
+
+        if (projectModal.style.display === 'none') {
+            projectModal.style.display = 'block';
+        } else {
+            clearTaskModal();
+        }
+    }
+
+    function noTasksDue() {
+        let h1 = document.createElement('h1');
+
+        if (!taskList.firstChild) {
+            if (currentProject === user.todayInbox) {
+                h1.textContent = 'No Tasks Due Today';
+                taskList.appendChild(h1);
+            } else if (currentProject === user.weekInbox) {
+                h1.textContent = 'No Tasks Due This Week';
+                taskList.appendChild(h1);
+            }
         }
     }
 
@@ -162,6 +203,7 @@ export const events = (() => {
             pushTask(newTask);
             toggleTaskModal();
             clearTitleError();
+            console.log(currentProject);
         }
     }
 
@@ -275,13 +317,19 @@ export const events = (() => {
             }
         });
 
+        projectUl.remove();
+
         if (currentProject.title === deadProject) {
             currentProject = user.inbox;
+            inboxButton.classList.add('current');
+            renderTasks(currentProject.tasks);
+        } else {
+            renderTasks(currentProject.tasks);
         }
     
-        projectUl.remove();
-        inboxButton.classList.add('current');
-        renderTasks(currentProject.tasks);
+        
+        // inboxButton.classList.add('current');
+        // renderTasks(currentProject.tasks);
     }
 
     function deleteTask(e) {
