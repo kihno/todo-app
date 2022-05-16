@@ -155,20 +155,20 @@ export const events = (() => {
         if (projectModal.style.display === 'none') {
             projectModal.style.display = 'block';
         } else {
-            clearTaskModal();
+            clearProjectModal();
         }
     }
 
     function noTasksDue() {
-        let h1 = document.createElement('h1');
+        let h2 = document.createElement('h2');
 
         if (!taskList.firstChild) {
             if (currentProject === user.todayInbox) {
-                h1.textContent = 'No Tasks Due Today';
-                taskList.appendChild(h1);
+                h2.textContent = 'No Tasks Due Today';
+                taskList.appendChild(h2);
             } else if (currentProject === user.weekInbox) {
-                h1.textContent = 'No Tasks Due This Week';
-                taskList.appendChild(h1);
+                h2.textContent = 'No Tasks Due This Week';
+                taskList.appendChild(h2);
             }
         }
     }
@@ -404,8 +404,6 @@ export const events = (() => {
                     if (task['complete'] === true) {
                         hexIcon.classList.toggle('checked');
                         ul.classList.toggle('complete');
-                        let hr = document.createElement('hr');
-                        ul.appendChild(hr);
                     }
                 } else if (prop === 'dueDate' && task[prop] !== "") {
                     li.textContent = format(parseISO(task[prop]), 'MM-dd-yyyy');
