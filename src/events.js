@@ -203,7 +203,6 @@ export const events = (() => {
             pushTask(newTask);
             toggleTaskModal();
             clearTitleError();
-            console.log(currentProject);
         }
     }
 
@@ -326,10 +325,6 @@ export const events = (() => {
         } else {
             renderTasks(currentProject.tasks);
         }
-    
-        
-        // inboxButton.classList.add('current');
-        // renderTasks(currentProject.tasks);
     }
 
     function deleteTask(e) {
