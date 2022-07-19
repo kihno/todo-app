@@ -32,11 +32,13 @@ export const events = (() => {
     const todayButton = document.getElementById('today');
     const weekButton = document.getElementById('week');
     const projectElements = document.getElementsByClassName('project');
+    const signInButton = document.getElementById('signIn');
 
     user.init();
     let currentProject = user.inbox;
 
     // Events
+
     inboxButton.addEventListener('click', () => {
         removeProjectClass();
         inboxButton.classList.add('current');

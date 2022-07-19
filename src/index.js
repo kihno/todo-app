@@ -30,28 +30,35 @@ import {
 } from 'firebase/storage';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 import { getPerformance } from 'firebase/performance';
-
-const firebaseApp = initializeApp({
-    apiKey: "AIzaSyCwWjjkVEmHINHnKaa_q6eLe2vcQd45vDs",
-    authDomain: "taskmaster-ea636.firebaseapp.com",
-    projectId: "taskmaster-ea636",
-    storageBucket: "taskmaster-ea636.appspot.com",
-    messagingSenderId: "181039207649",
-    appId: "1:181039207649:web:51255b586d79ecea9d53a0",
-    measurementId: "G-TN47PFL09T"
-});
+import { getFirebaseConfig } from './firebase-config.js';
 
 async function signIn() {
     var provider = new GoogleAuthProvider();
     await signInWithPopup(getAuth(), provider);
 }
 
+events.signInButton.addEventListener('click', () => {
+    signIn();
+});
+
 function signOutUser() {
-    // Sign out of Firebase.
     signOut(getAuth());
 }
 
-initializeApp(firebaseApp);
+function getProfilePicUrl() {
+    return getAuth().currentUser.photoURL || '/images/profile_placeholder.png';
+}
+
+function getUserName() {
+    return getAuth().currentUser.displayName;
+}
+
+function isUserSignedIn() {
+    return !!getAuth().currentUser;
+}
+
+const firebaseAppConfig = getFirebaseConfig();
+initializeApp(firebaseAppConfig);
 
 window.onload = function() {
     events.renderProjectList();
