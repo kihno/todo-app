@@ -8,7 +8,7 @@
 </head>
 <body>
     <div id="header">
-        <img id="logo" src="../src/images/taskmaster.png" alt="Taskmaster">
+        <img id="logo" src="./taskmaster.png" alt="Taskmaster">
     </div>
 
     <div id="sidebar">
@@ -19,7 +19,7 @@
         </ul>
         
         <div id="newProject">
-            <img src="../src//images/add.svg" class="plusIcon">
+            <img src="../src/images/add.svg" id="plusIcon">
             <p>Project</p>
         </div>
 
@@ -28,7 +28,7 @@
                 <label for="projectName">
                     <input type="text" id="projectName" placeholder="Project Name">
                 </label>
-                <button type="submit" id="projectSubmit"><img src="../src//images/add.svg" alt="Add" id="addProject" class="plusIcon"></button>
+                <button type="submit" id="projectSubmit"><img src="../src/images/add.svg" alt="Add" id="addProject"></button>
             </form>
             <div id="projectError"></div>
         </div>
@@ -49,7 +49,7 @@
         <div id="taskList"></div>
         <div id="taskButtonContainer">
             <div id="addTask">
-                <img  src="../src//images/add.svg" class="plusIcon">
+                <img  src="../src/images/add.svg" id="plusIcon">
                 <p>Task</p>
             </div>
         </div>
@@ -75,12 +75,15 @@
                     <input type="radio" id="high" name="priority" value="high">
                     <label for="high">High</label>
                 </div>
-                <button type="submit" id="submit"><img src="../src/images/add.svg" alt="Add" class="plusIcon" id="submitIcon"></button>
+                <button type="submit" id="submit"><img src="../src/images/add.svg" alt="Add" id="submitIcon"></button>
 
             </form>
         </div>
+
+        <div id="footer"><p>Created by <a href="http://github.com/kihno">Kihno</a></p></div>
     </div>
 
+    
     <script src="./main.js" defer></script>
 </body>
 </html>
