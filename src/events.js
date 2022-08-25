@@ -5,6 +5,8 @@ import HexIcon from './images/hex.svg';
 import LowPriority from './images/low-priority.png';
 import MediumPriority from './images/medium-priority.png';
 import HighPriority from './images/high-priority.png';
+import Logo from './images/taskmaster.png';
+import PlusIcon from './images/add.svg';
 import {user} from './user.js';
 import {pubsub} from './pubsub.js';
 import {Projects} from './projects.js';
@@ -32,7 +34,10 @@ export const events = (() => {
     const todayButton = document.getElementById('today');
     const weekButton = document.getElementById('week');
     const projectElements = document.getElementsByClassName('project');
+    const logo = document.getElementById("logo");
+    const plusIcons = document.querySelectorAll(".plusIcon");
 
+    loadImages();
     user.init();
     let currentProject = user.inbox;
 
@@ -83,6 +88,15 @@ export const events = (() => {
     pubsub.sub('projectDeleted', renderSidebar);
 
     //Functions
+    function loadImages() {
+        logo.src = Logo;
+        console.log(plusIcons);
+        plusIcons.forEach(icon => {
+            icon.src = PlusIcon;
+            console.log(icon.src);
+        });
+    }
+
     function setStorage() {
         localStorage.setItem(`allProjects`, JSON.stringify(user.allProjects));
     }
