@@ -90,10 +90,8 @@ export const events = (() => {
     //Functions
     function loadImages() {
         logo.src = Logo;
-        console.log(plusIcons);
         plusIcons.forEach(icon => {
             icon.src = PlusIcon;
-            console.log(icon.src);
         });
     }
 
