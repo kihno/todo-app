@@ -216,10 +216,11 @@ body, h1, p, ul, li {
     width: 120px;
     height: 50px;
     margin: 10px;
- }
-  
- #addTask:hover {
-    transform: scale(1.1);
+}
+
+#addTask:hover {
+    width: 122px;
+    height: 52px;
     box-shadow: 1px 1px 5px rgba(0,0,0,0.5);
  }
  #addTask:active {
@@ -287,57 +288,4 @@ body, h1, p, ul, li {
   
  #submitIcon {
     width: 100%;
- }
-  
- #footer {
-    width: 100%;
-    text-align: center;
-    position: absolute;
-    bottom: 0;
- }
-  
- @media screen and (max-width: 800px) {
-    body {
-        grid: 1fr 1fr 4fr / 1fr;
-        width: 100vw;
-        height: 100vh;
-    }
-  
-    #header {
-        grid-area: 1 / 1 / 2 / 2;
-        width: 100%;
-    }
-  
-    #sidbar {
-        grid-area: 2 / 1 / 3 / 2;
-        width: 100%;
-    }
-  
-    #main {
-        grid-area: 3 / 1 / 4 / 2;
-        width: 100%;
-    }
-  
-    #logo {
-        width: 300px;
-    }
-  
-    #taskHeader {
-       width: calc(100% - 40px);
-       font-size: 8px;
-    }
-  
-    #taskList {
-        font-size: 50%;
-        width: calc(100% - 40px);
-    }
-  
-    #taskModal {
-       width: calc(100% - 30px);
-    }
-  
-    #taskForm {
-        flex-direction: column;
-    }
- }
- 
+}
