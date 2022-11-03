@@ -36,9 +36,9 @@ body, h1, p, ul, li {
     display: flex;
     gap:10px;
     flex-direction: column;
- }
-  
- #projects {
+}
+
+#projects {
     width: 80%;
     display: grid;
     gap: 10px;
@@ -82,9 +82,9 @@ body, h1, p, ul, li {
     width: 160px;
     height: 50px;
     align-self: start;
- }
-  
- #newProject:hover {
+}
+
+#newProject:hover {
     transform: scale(1.1);
     box-shadow: 1px 1px 5px rgba(0,0,0,0.5);
  }
@@ -157,9 +157,9 @@ body, h1, p, ul, li {
     padding-left: 20px;
     padding-right: 20px;
     width: 100%;
- }
-  
- .task {
+}
+
+.task {
     border-bottom: 1px solid black;
     padding: 10px;
  }
@@ -219,8 +219,7 @@ body, h1, p, ul, li {
 }
 
 #addTask:hover {
-    width: 122px;
-    height: 52px;
+    transform: scale(1.1);
     box-shadow: 1px 1px 5px rgba(0,0,0,0.5);
  }
  #addTask:active {
@@ -238,46 +237,46 @@ body, h1, p, ul, li {
     width: 100%;
     background-color: white;
     z-index: 1;
- }
-  
- #taskForm {
+}
+
+#taskForm {
     width: 100%;
     display: flex;
     justify-content: space-around;
     gap: 10px
- }
-  
- .form-row {
+}
+
+.form-row {
     display: flex;
     flex-direction: column;
     gap: 10px;
- }
-  
- #title, #description, #dueDate {
+}
+
+#title, #description, #dueDate {
     border: 1px solid rgb(92, 88, 88);
     border-radius: 5px;
- }
-  
- #titleError {
+}
+
+#titleError {
     font-size: 12px;
     grid-area: 3 / 2 / 4 / 3;
     color: red;
- }
-  
- #dueDate {
+}
+
+#dueDate {
     width: 90%;
- }
-  
- #submit {
+}
+
+#submit {
     color: white;
     background-color: #e65310;
     border: none;
     width: 50px;
     height: 50px;
     border-radius: 3px;
- }
-  
- #submit:hover {
+}
+
+#submit:hover {
     transform: scale(1.1);
     box-shadow: 1px 1px 5px rgba(0,0,0,0.5);
  }
@@ -288,4 +287,13 @@ body, h1, p, ul, li {
   
  #submitIcon {
     width: 100%;
+<<<<<<< HEAD
+=======
+}
+
+#footer {
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    bottom: 0;
 }
