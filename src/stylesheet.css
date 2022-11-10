@@ -153,7 +153,7 @@ body {
    list-style: none;
    display: grid;
    align-items: center;
-   grid-template-columns: 1fr 3fr 4fr 3fr 1.2fr 1fr 1fr;
+   grid-template-columns: 1fr 3fr 4fr 3fr 2fr 1fr 1fr;
    gap:  10px;
    grid-auto-flow: column;
    padding: 10px;
@@ -169,7 +169,6 @@ body {
 
 .task {
    border-bottom: 1px solid black;
-   padding: 10px;
 }
 
 #taskList {
@@ -210,6 +209,10 @@ hr {
 .task-delete {
    height: 30px;
    float: right;
+}
+
+.task-project {
+   padding-left: 10px;
 }
 
 .task-delete:hover {
@@ -315,7 +318,7 @@ hr {
       width: 100%;
    }
 
-   #sidbar {
+   #sidebar {
       grid-area: 2 / 1 / 3 / 2;
       width: calc(100% - 40px);
    }
@@ -335,7 +338,6 @@ hr {
 
    #taskList {
       font-size: 50%;
-      width: calc(100% - 40px);
    }
 
    #taskModal {
@@ -345,5 +347,9 @@ hr {
 
    #taskForm {
       flex-direction: column;
+   }
+
+   .task-delete {
+      width: 16px;
    }
 }
