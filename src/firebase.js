@@ -1,9 +1,6 @@
-import './stylesheet.css';
-import {user} from './user.js';
-import {events} from './events.js';
 
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, doc, getDocs } from 'firebase/firestore/lite';
+import { getFirestore, collection, doc, getDoc, getDocs } from 'firebase/firestore/lite';
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_API_KEY,
@@ -24,15 +21,5 @@ const colRef = collection(db, 'tasks');
 
 getDocs(colRef)
 .then((snapshot) => {
-    let tasks = [];
-    snapshot.docs.forEach((doc) => {
-        tasks.push({ ...doc.data(), id: doc.id })
-    });
-
-    console.log(tasks);
-}).catch((err) => { console.log(err) });
-
-window.onload = function() {
-    events.renderProjectList();
-    events.renderTasks(user.inbox.tasks);
-};
+    console.log(snapshot.docs)
+});
