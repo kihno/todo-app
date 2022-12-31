@@ -1,6 +1,6 @@
 
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, doc, getDoc, getDocs } from 'firebase/firestore/lite';
+import { getFirestore, collection, doc, addDoc, getDocs, deleteDoc } from 'firebase/firestore/lite';
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_API_KEY,
@@ -17,9 +17,27 @@ initializeApp(firebaseConfig);
 
 const db = getFirestore();
 
-const colRef = collection(db, 'tasks');
+export const usersRef = collection(db, 'users');
+const taskRef = doc(db, 'tasks', id);
 
-getDocs(colRef)
-.then((snapshot) => {
-    console.log(snapshot.docs)
-});
+// export const getData = () => {
+//     getDocs(usersRef)
+//     .then((snapshot) => {
+//         let tasks = [];
+//         snapshot.docs.forEach((doc) => {
+//             tasks.push({ ...doc.data(), id: doc.id })
+//         });
+
+//         console.log(tasks);
+         
+//         return tasks;
+//     }).catch((err) => { console.log(err) });
+// }
+
+export const storeTask = (task) => {
+    addDoc(taskRef, task);
+}
+
+export const deleteStoredTask = (id) => {
+    deleteDoc(docRef, id);
+}

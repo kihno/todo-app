@@ -9,6 +9,8 @@ import {user} from './user.js';
 import {pubsub} from './pubsub.js';
 import {Projects} from './projects.js';
 import {Tasks} from './tasks.js';
+import {storeTask, deleteStoredTask} from './firebase.js';
+import { uuidv4 } from '@firebase/util';
 
 export const events = (() => {
 
@@ -201,8 +203,14 @@ export const events = (() => {
         if (title.value === '') {
             titleError.textContent = 'Please enter task name'
         } else {
+            let user = null;
+            if (loggedIn) {
+                user = user.id;
+            }
+
             const newTask = new Tasks(title.value, description.value, dueDate.value, priorityValue(priority), currentProject.title);
             pushTask(newTask);
+            storeTask(JSON.parse(JSON.stringify(newTask)));
             toggleTaskModal();
             clearTitleError();
         }
@@ -331,9 +339,10 @@ export const events = (() => {
 
     function deleteTask(e) {
         let taskUl = e.target.parentNode;
-        let taskTitle = taskUl.querySelector('.task-title').textContent;
-        let taskDescription = taskUl.querySelector('.task-description').textContent;
+        // let taskTitle = taskUl.querySelector('.task-title').textContent;
+        // let taskDescription = taskUl.querySelector('.task-description').textContent;
         let taskDueDate = taskUl.querySelector('.task-dueDate').textContent;
+        let taskId = taskUl.getAttribute('data-id');
 
         let reformatDate = '';
         if (taskDueDate !== '') {
@@ -342,11 +351,14 @@ export const events = (() => {
 
         user.allProjects.forEach(project => {
             project.tasks.forEach(task => {
-                if (taskTitle === task.title && taskDescription === task.description && reformatDate === task.dueDate) {
+                if (taskId === task.id) {
                     project.removeTask(task);
                 }
             });
         });
+
+        console.log(taskId);
+        deleteStoredTask(taskId);
     }
 
     function checkTask(e) {
@@ -382,6 +394,7 @@ export const events = (() => {
             const ul = document.createElement('ul');
             ul.className = 'task';
             ul.setAttribute('data-index', project.indexOf(task));
+            ul.setAttribute('data-id', task.id);
             taskList.appendChild(ul);
 
             const hexIcon = new Image();
@@ -422,6 +435,8 @@ export const events = (() => {
                     }
                 } else if (prop === 'project' && task[prop] === 'inbox') {
                     li.textContent = '';
+                } else if (prop ==='id') {
+                    continue;
                 } else {
                     li.textContent = task[prop];
                 }
