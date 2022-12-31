@@ -1,4 +1,3 @@
-
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, doc, addDoc, getDocs, deleteDoc } from 'firebase/firestore/lite';
 
@@ -18,7 +17,7 @@ initializeApp(firebaseConfig);
 const db = getFirestore();
 
 export const usersRef = collection(db, 'users');
-const taskRef = doc(db, 'tasks', id);
+export const taskRef = collection(db, 'tasks');
 
 // export const getData = () => {
 //     getDocs(usersRef)
