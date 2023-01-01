@@ -38,5 +38,6 @@ export const storeTask = (task) => {
 }
 
 export const deleteStoredTask = (id) => {
-    deleteDoc(docRef, id);
+    const docRef = doc(db, 'tasks', id)
+    deleteDoc(docRef);
 }

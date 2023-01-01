@@ -1,12 +1,14 @@
 import {Projects} from './projects';
 import { getFirestore, collection, doc, addDoc, getDocs, deleteDoc } from 'firebase/firestore/lite';
 import { usersRef, taskRef } from './firebase';
+import {format, isWithinInterval, addDays, parseISO} from 'date-fns';
 
 export const user = {
     inbox: new Projects('inbox'),
     todayInbox: new Projects('today'),
     weekInbox: new Projects('week'),
     allProjects: [],
+    loggedIn: true,
     tasks: [],
     id: '',
 
@@ -22,30 +24,30 @@ export const user = {
                 users.forEach((user) => {
                     if (user.username == 'testUser') {
                         this.id = user.id;
+                        this.loggedIn = true;
                         console.log(this.id);
                     }
                 });
+
             }).catch((err) => { console.log(err) });
     },
 
     sortTasks() {
-        let date = new Date();
-
-        function addDays(date, days) {
-            date.setDate(date.getDate() + days);
-            return date;
-        }
+        let date = format(new Date(), 'yyyy-MM-dd');;
           
-        let week = addDays(date, 7);
+        let week = format(addDays(parseISO(date), 7), 'yyyy-MM-dd')
+
+        console.log(week);
 
         let todayTasks = [];
         let weekTasks = [];
         let allTasks = [];
         this.tasks.forEach((task) => {
-            if (task.dueDate == date) {
+            if (task.dueDate === date) {
                 allTasks.push({...task});
                 todayTasks.push({...task});
-            } else if (task.dueDate <= week ) {
+                weekTasks.push({...task});
+            } else if (task.dueDate < week) {
                 allTasks.push({...task});
                 weekTasks.push({...task});
             } else {
@@ -60,22 +62,28 @@ export const user = {
         console.log(this.allProjects);
     },
 
-    init() {
+    async init(callback) {
         this.login();
 
-        let loggedIn = true;
-        let authUser = 'user@email.com';
-
-        if (loggedIn === true) {
+        // let loggedIn = true;
+        // let authUser = 'user@email.com';
+        if (this.loggedIn) {
             getDocs(taskRef)
                 .then((snapshot) => {
+                    let allTasks = [];
                     snapshot.docs.forEach((doc) => {
-                        if (doc.user = this.id) {
-                            this.tasks.push({ ...doc.data(), id: doc.id});
-                        }
+                        allTasks.push({...doc.data(), id: doc.id});
                     });
 
+                    allTasks.forEach(task => {
+                        if (task.user === this.id) {
+                            this.tasks.push({ ...task});
+                        }
+                    });
+                    
                     this.sortTasks();
+
+                    callback();
 
                 }).catch((err) => { console.log(err) });
             // getDocs(usersRef)

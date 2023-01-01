@@ -36,8 +36,12 @@ export const events = (() => {
     const projectElements = document.getElementsByClassName('project');
     const signInButton = document.getElementById('signIn');
 
-    user.init();
-    let currentProject = user.inbox;
+    let currentProject
+    user.init(() => {
+        currentProject = user.inbox;
+        renderMain();
+        console.log(user.weekInbox);
+    });
 
     // Events
 
@@ -92,13 +96,20 @@ export const events = (() => {
     }
 
     function renderSidebar() {
-        setStorage();
+        if (user.loggedIn === false) {
+            setStorage();
+        }
+
         renderProjectList();
         renderTasks(currentProject.tasks);
     }
 
     function renderMain() {
-        setStorage();
+        if (user.loggedIn === false) {
+            setStorage();
+        }
+
+        console.log(currentProject.tasks)
         renderTasks(currentProject.tasks);
     }
 
@@ -203,12 +214,12 @@ export const events = (() => {
         if (title.value === '') {
             titleError.textContent = 'Please enter task name'
         } else {
-            let user = null;
-            if (loggedIn) {
-                user = user.id;
+            let authUser = null;
+            if (user.loggedIn) {
+                authUser = user.id;
             }
 
-            const newTask = new Tasks(title.value, description.value, dueDate.value, priorityValue(priority), currentProject.title);
+            const newTask = new Tasks(title.value, description.value, dueDate.value, priorityValue(priority), currentProject.title, authUser);
             pushTask(newTask);
             storeTask(JSON.parse(JSON.stringify(newTask)));
             toggleTaskModal();
@@ -390,6 +401,9 @@ export const events = (() => {
     function renderTasks(project) {
         clearProject();
 
+        project.sort((a,b) => (a.dueDate > b.dueDate) ? 1 : ((b.dueDate > a.dueDate) ? -1 : 0))
+        console.log(project);
+
         project.forEach(task => {
             const ul = document.createElement('ul');
             ul.className = 'task';
@@ -435,7 +449,7 @@ export const events = (() => {
                     }
                 } else if (prop === 'project' && task[prop] === 'inbox') {
                     li.textContent = '';
-                } else if (prop ==='id') {
+                } else if (prop === 'id' || prop === 'user') {
                     continue;
                 } else {
                     li.textContent = task[prop];
