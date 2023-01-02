@@ -9,8 +9,7 @@ import {user} from './user.js';
 import {pubsub} from './pubsub.js';
 import {Projects} from './projects.js';
 import {Tasks} from './tasks.js';
-import {storeTask, deleteStoredTask} from './firebase.js';
-import { uuidv4 } from '@firebase/util';
+import {storeTask, deleteStoredTask, signInUser, signOutUser} from './firebase.js';
 
 export const events = (() => {
 
@@ -34,16 +33,26 @@ export const events = (() => {
     const todayButton = document.getElementById('today');
     const weekButton = document.getElementById('week');
     const projectElements = document.getElementsByClassName('project');
-    const signInButton = document.getElementById('signIn');
+    const signInButton = document.getElementById('sign-in');
+    const signOutButton = document.getElementById('sign-out');
+    const userInfo = document.getElementById('user-info');
+    const userPic = document.getElementById('user-pic');
+    const userName = document.getElementById('user-name');
 
     let currentProject
     user.init(() => {
         currentProject = user.inbox;
         renderMain();
-        console.log(user.weekInbox);
     });
 
     // Events
+    signInButton.addEventListener('click', () => {
+        signInUser();
+    });
+
+    signOutButton.addEventListener('click', () => {
+        signOutUser();
+    });
 
     inboxButton.addEventListener('click', () => {
         removeProjectClass();
@@ -85,12 +94,50 @@ export const events = (() => {
 
     projectSubmit.addEventListener('click', validateProject);
 
+    pubsub.sub('userLoggedIn', authenticateUser);
+    pubsub.sub('userLoggedOut', logOutUser);
+
     pubsub.sub('taskAdded', renderMain);
     pubsub.sub('taskDeleted', renderMain);
     pubsub.sub('projectAdded', renderSidebar);
     pubsub.sub('projectDeleted', renderSidebar);
 
     //Functions
+    function authenticateUser(authUser) {
+        user.loggedIn = true;
+        user.id = authUser.uid;
+        
+        userName.textContent = authUser.displayName;
+        userPic.src = authUser.photoURL;
+
+        user.init(() => {
+            currentProject = user.inbox;
+            userInfo.hidden = false;
+            signInButton.hidden = true;
+            renderMain();
+        });
+    }
+
+    function logOutUser() {
+        user.inbox = new Projects('inbox');
+        user.todayInbox = new Projects('today');
+        user.weekInbox = new Projects('week');
+        user.allProjects = [];
+        user.tasks = [];
+
+        user.loggedIn = false;
+        user.id = '';
+        
+        userName.textContent = '';
+        userPic.src = '';
+
+        userInfo.hidden = true;
+        signInButton.hidden = false;
+
+        currentProject = user.inbox;
+        renderMain();
+    }
+
     function setStorage() {
         localStorage.setItem(`allProjects`, JSON.stringify(user.allProjects));
     }
@@ -98,6 +145,8 @@ export const events = (() => {
     function renderSidebar() {
         if (user.loggedIn === false) {
             setStorage();
+            renderProjectList();
+            renderTasks(currentProject.tasks);
         }
 
         renderProjectList();
@@ -107,9 +156,8 @@ export const events = (() => {
     function renderMain() {
         if (user.loggedIn === false) {
             setStorage();
+            renderTasks(currentProject.tasks);
         }
-
-        console.log(currentProject.tasks)
         renderTasks(currentProject.tasks);
     }
 
@@ -368,7 +416,6 @@ export const events = (() => {
             });
         });
 
-        console.log(taskId);
         deleteStoredTask(taskId);
     }
 
@@ -402,7 +449,6 @@ export const events = (() => {
         clearProject();
 
         project.sort((a,b) => (a.dueDate > b.dueDate) ? 1 : ((b.dueDate > a.dueDate) ? -1 : 0))
-        console.log(project);
 
         project.forEach(task => {
             const ul = document.createElement('ul');

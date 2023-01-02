@@ -1,5 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, doc, addDoc, getDocs, deleteDoc } from 'firebase/firestore/lite';
+import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
+import { pubsub } from './pubsub';
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_API_KEY,
@@ -15,6 +17,8 @@ const firebaseConfig = {
 initializeApp(firebaseConfig);
 
 const db = getFirestore();
+const auth = getAuth();
+const provider = new GoogleAuthProvider;
 
 export const usersRef = collection(db, 'users');
 export const taskRef = collection(db, 'tasks');
@@ -41,3 +45,29 @@ export const deleteStoredTask = (id) => {
     const docRef = doc(db, 'tasks', id)
     deleteDoc(docRef);
 }
+
+export const signInUser = () => {
+    signInWithPopup(auth, provider)
+        .then((result) => {
+            console.log('login successful')
+        }).catch((err) => {
+            console.log(err);
+        });
+}
+
+export const signOutUser = () => {
+    signOut(auth)
+        .then(() => {
+            console.log('user signed out');
+        }).catch((err) => {
+            console.log(err);
+        });
+}
+
+onAuthStateChanged(auth, (authUser) => {
+    if (authUser) {
+        pubsub.pub('userLoggedIn', authUser);
+    } else {
+        pubsub.pub('userLoggedOut');
+    }
+});

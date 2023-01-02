@@ -10,7 +10,6 @@ export class Projects {
     addTask(task) {
         this.tasks.push(task);
         pubsub.pub('taskAdded', this.tasks);
-        console.log(this.tasks);
     }
 
     removeTask(task) {

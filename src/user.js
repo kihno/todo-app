@@ -4,11 +4,13 @@ import { usersRef, taskRef } from './firebase';
 import {format, isWithinInterval, addDays, parseISO} from 'date-fns';
 
 export const user = {
+    displayName: '',
+    imageUrl: '',
     inbox: new Projects('inbox'),
     todayInbox: new Projects('today'),
     weekInbox: new Projects('week'),
     allProjects: [],
-    loggedIn: true,
+    loggedIn: false,
     tasks: [],
     id: '',
 
@@ -25,7 +27,6 @@ export const user = {
                     if (user.username == 'testUser') {
                         this.id = user.id;
                         this.loggedIn = true;
-                        console.log(this.id);
                     }
                 });
 
@@ -36,8 +37,6 @@ export const user = {
         let date = format(new Date(), 'yyyy-MM-dd');;
           
         let week = format(addDays(parseISO(date), 7), 'yyyy-MM-dd')
-
-        console.log(week);
 
         let todayTasks = [];
         let weekTasks = [];
@@ -59,11 +58,10 @@ export const user = {
         this.todayInbox = new Projects('today', todayTasks);
         this.weekInbox = new Projects('week', weekTasks);
         this.allProjects.push(this.inbox, this.todayInbox, this.weekInbox);
-        console.log(this.allProjects);
     },
 
-    async init(callback) {
-        this.login();
+    init(callback) {
+        // this.login();
 
         // let loggedIn = true;
         // let authUser = 'user@email.com';
@@ -114,27 +112,28 @@ export const user = {
             //     });
     
             // }).catch((err) => { console.log(err) });
-        } else {
-            if (JSON.parse(localStorage.getItem('allProjects')) !== null) {
-
-                let storedProjects = JSON.parse(localStorage.getItem('allProjects'));
-                
-                this.inbox = new Projects(storedProjects[0].title, storedProjects[0].tasks);
-                this.todayInbox = new Projects(storedProjects[1].title, storedProjects[1].tasks);
-                this.weekInbox = new Projects(storedProjects[2].title, storedProjects[2].tasks);
-                this.allProjects.push(this.inbox, this.todayInbox, this.weekInbox);
-        
-                for (let i=3; i< storedProjects.length; i++) {
-                    let userProject = new Projects(storedProjects[i].title, storedProjects[i].tasks);
-                    this.allProjects.push(userProject);
-                }
-    
-            } else {
-    
-                this.allProjects.push(this.inbox, this.todayInbox, this.weekInbox);
-                localStorage.setItem('allProjects', JSON.stringify(this.allProjects));
-    
-            } 
         }
+        // else {
+        //     if (JSON.parse(localStorage.getItem('allProjects')) !== null) {
+
+        //         let storedProjects = JSON.parse(localStorage.getItem('allProjects'));
+                
+        //         this.inbox = new Projects(storedProjects[0].title, storedProjects[0].tasks);
+        //         this.todayInbox = new Projects(storedProjects[1].title, storedProjects[1].tasks);
+        //         this.weekInbox = new Projects(storedProjects[2].title, storedProjects[2].tasks);
+        //         this.allProjects.push(this.inbox, this.todayInbox, this.weekInbox);
+        
+        //         for (let i=3; i< storedProjects.length; i++) {
+        //             let userProject = new Projects(storedProjects[i].title, storedProjects[i].tasks);
+        //             this.allProjects.push(userProject);
+        //         }
+    
+        //     } else {
+    
+        //         this.allProjects.push(this.inbox, this.todayInbox, this.weekInbox);
+        //         localStorage.setItem('allProjects', JSON.stringify(this.allProjects));
+    
+        //     } 
+        // }
     },
 };
