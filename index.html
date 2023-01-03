@@ -4,23 +4,30 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <title>Taskmaster</title>
 </head>
 <body>
     <div id="header">
         <img id="logo" src="../src/images/taskmaster.png" alt="Taskmaster">
         <div id="user-container">
-            <div hidden id="user-info">
-                <img id="user-pic"></img>
-                <div id="user-name"></div>
+            <div id="user-info" class="hide">
+                <div class="greeting">
+                    <span class="hello">Hello</span>
+                    <span id="user-name" class="username"></span>
+                </div>
+                
                 <button id="sign-out" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white">
                 Sign-out
                 </button>
             </div>
-            <button id="sign-in" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white">
-              <i class="material-icons"></i>Sign-in with Google
+            <button id="sign-in">
+                <span class="material-symbols-outlined">
+                    account_circle
+                </span>
+                Sign-in with Google
             </button>
-          </div>
+        </div>
     </div>
 
     <div id="sidebar">
