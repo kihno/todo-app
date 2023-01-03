@@ -21,11 +21,43 @@ body {
     background-color: #000a4e;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     grid-area: 1 / 1 / 2 / 3;
+    padding: 0 50px 0 50px;
 }
 
 #logo {
     width: 500px;
+}
+
+#sign-in, #sign-out {
+    border: none;
+    border-radius: 5px;
+    background-color: #e65310;
+    color: white;
+    font-weight: bold;
+    font-size: medium;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px;
+}
+
+#sign-in:hover, #sign-out:hover {
+    transform: scale(1.03);
+    box-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+}
+
+#user-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.greeting {
+    color: white;
+    font-size: large;
+    font-weight: bold;
 }
 
 /* Sidebar */
@@ -85,10 +117,10 @@ body {
 }
 
 #newProject:hover {
-    width: 162px;
-    height: 52px;
+    transform: scale(1.05);
     box-shadow: 1px 1px 5px rgba(0,0,0,0.5);
 }
+
 #newProject:active {
     width: 159px;
     height: 49px;
@@ -231,10 +263,10 @@ body {
 }
 
 #addTask:hover {
-    width: 122px;
-    height: 52px;
+    transform: scale(1.03);
     box-shadow: 1px 1px 5px rgba(0,0,0,0.5);
 }
+
 #addTask:active {
     width: 119px;
     height: 49px;
@@ -303,6 +335,11 @@ body {
     align-self: end;
 }
 
+.overdue {
+    color: red;
+    font-weight: bold;
+}
+
 #priority {
     grid-area: 2 / 5 / 4 / 6; 
 }
@@ -318,8 +355,7 @@ body {
 }
 
 #submit:hover {
-    width: 52px;
-    height: 52px;
+    transform: scale(1.05);
     box-shadow: 1px 1px 5px rgba(0,0,0,0.5);
 }
 #submit:active {
@@ -330,4 +366,8 @@ body {
 
 #submitIcon {
     width: 100%;
+}
+
+.hide {
+    display: none !important;
 }

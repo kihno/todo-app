@@ -8,6 +8,7 @@ module.exports = {
   output: {
     filename: 'main.js',
     path: path.resolve(__dirname, 'dist'),
+    assetModuleFilename: 'src/images/[name].[ext]',
   },
   plugins: [
     new Dotenv(),

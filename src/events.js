@@ -36,7 +36,7 @@ export const events = (() => {
     const signInButton = document.getElementById('sign-in');
     const signOutButton = document.getElementById('sign-out');
     const userInfo = document.getElementById('user-info');
-    const userPic = document.getElementById('user-pic');
+    // const userPic = document.getElementById('user-pic');
     const userName = document.getElementById('user-name');
 
     let currentProject
@@ -108,12 +108,12 @@ export const events = (() => {
         user.id = authUser.uid;
         
         userName.textContent = authUser.displayName;
-        userPic.src = authUser.photoURL;
+        // userPic.src = authUser.photoURL;
 
         user.init(() => {
             currentProject = user.inbox;
-            userInfo.hidden = false;
-            signInButton.hidden = true;
+            userInfo.classList.remove('hide');
+            signInButton.classList.add('hide');
             renderMain();
         });
     }
@@ -129,10 +129,10 @@ export const events = (() => {
         user.id = '';
         
         userName.textContent = '';
-        userPic.src = '';
+        // userPic.src = '';
 
-        userInfo.hidden = true;
-        signInButton.hidden = false;
+        userInfo.classList.add('hide');
+        signInButton.classList.remove('hide');
 
         currentProject = user.inbox;
         renderMain();
@@ -483,6 +483,11 @@ export const events = (() => {
                         ul.classList.toggle('complete');
                     }
                 } else if (prop === 'dueDate' && task[prop] !== "") {
+                    let date = format(new Date(), 'yyyy-MM-dd');
+                    if (task[prop] < date && task.complete === false) {
+                        li.classList.add('overdue');
+                    }
+
                     li.textContent = format(parseISO(task[prop]), 'MM-dd-yyyy');
                 } else if (prop === 'priority') {
                     li.className += ' ' + task[prop];
