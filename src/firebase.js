@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, doc, addDoc, getDocs, deleteDoc } from 'firebase/firestore/lite';
+import { getFirestore, collection, doc, addDoc, getDocs, deleteDoc, updateDoc } from 'firebase/firestore/lite';
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
 import { pubsub } from './pubsub';
 
@@ -39,6 +39,12 @@ export const taskRef = collection(db, 'tasks');
 
 export const storeTask = (task) => {
     addDoc(taskRef, task);
+}
+
+export const updateTask = (id, updatedTask) => {
+    const docRef = doc(db, 'tasks', id);
+
+    updateDoc(docRef, updatedTask)
 }
 
 export const deleteStoredTask = (id) => {

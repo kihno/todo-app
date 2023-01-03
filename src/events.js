@@ -9,7 +9,7 @@ import {user} from './user.js';
 import {pubsub} from './pubsub.js';
 import {Projects} from './projects.js';
 import {Tasks} from './tasks.js';
-import {storeTask, deleteStoredTask, signInUser, signOutUser} from './firebase.js';
+import {storeTask, deleteStoredTask, signInUser, signOutUser, updateTask} from './firebase.js';
 
 export const events = (() => {
 
@@ -422,20 +422,27 @@ export const events = (() => {
     function checkTask(e) {
         let checkbox = e.target;
         let task = e.target.parentNode.parentNode;
-        let index = task.getAttribute('data-index');
+        let id = task.getAttribute('data-id');
 
         checkbox.classList.toggle('checked');
         task.classList.toggle('complete');
 
-        if (currentProject.tasks[index].complete === false) {
-            currentProject.tasks[index].complete = true;
-            renderMain(currentProject.tasks);
-            
-        } else {
-            currentProject.tasks[index].complete = false;
-            renderMain(currentProject.tasks);
-            
-        }
+        user.allProjects.forEach(project => {
+            project.tasks.forEach(task => {
+                if (task.id === id) {
+                    if (task.complete === false) {
+                        task.complete = true;
+                        updateTask(id, task);
+                        renderMain(currentProject.tasks);
+                        
+                    } else {
+                        task.complete = false;
+                        updateTask(id, task);
+                        renderMain(currentProject.tasks);
+                    }
+                }
+            });
+        });
     }
 
     function renderProjectList() {
