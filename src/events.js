@@ -9,7 +9,7 @@ import {user} from './user.js';
 import {pubsub} from './pubsub.js';
 import {Projects} from './projects.js';
 import {Tasks} from './tasks.js';
-import {storeTask, deleteStoredTask, signInUser, signOutUser, updateTask, storeProject, deleteStoredProject, getProjectName} from './firebase.js';
+import {storeTask, deleteStoredTask, signInUser, signOutUser, updateTask, storeProject, deleteStoredProject} from './firebase.js';
 
 export const events = (() => {
 
@@ -468,13 +468,6 @@ export const events = (() => {
             const newProject = new Projects(user.allProjects[i].title, authUser, user.allProjects[i].id, user.allProjects[i].tasks);
             createProjectElement(newProject);
         }
-
-        // user.allProjects.forEach(project => {
-        //     if (project.title != 'inbox' && project.title != 'today' && project.title != 'week') {
-        //         const newProject = new Projects(project.title, user.id, project.tasks);
-        //         createProjectElement(newProject);
-        //     }
-        // });
     }
 
     function clearProjectList() {
