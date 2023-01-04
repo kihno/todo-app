@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, doc, addDoc, deleteDoc, updateDoc } from 'firebase/firestore/lite';
+import { getFirestore, collection, doc, addDoc, deleteDoc, updateDoc, getDoc } from 'firebase/firestore/lite';
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
 import { pubsub } from './pubsub';
 

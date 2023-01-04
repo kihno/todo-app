@@ -51,17 +51,17 @@ export const user = {
                 allTasks.push({...task});
                 todayTasks.push({...task});
                 weekTasks.push({...task});
-            } else if (task.dueDate < week) {
+            } else if (task.dueDate < week && task.dueDate !== '') {
                 allTasks.push({...task});
                 weekTasks.push({...task});
-            } else {
+            } else if (task.dueDate === '') {
                 allTasks.push({...task});
             }
         });
 
-        this.inbox = new Projects('inbox', allTasks);
-        this.todayInbox = new Projects('today', todayTasks);
-        this.weekInbox = new Projects('week', weekTasks);
+        this.inbox = new Projects('inbox', this.id, 'inbox', allTasks);
+        this.todayInbox = new Projects('today', this.id, 'today', todayTasks);
+        this.weekInbox = new Projects('week', this.id, 'week', weekTasks);
         this.allProjects.push(this.inbox, this.todayInbox, this.weekInbox);
     },
 
@@ -81,7 +81,7 @@ export const user = {
                     });
                     
                     this.sortTasks();
-
+                    callback();
                 }).catch((err) => { console.log(err) });
 
             getDocs(projectRef)
@@ -93,9 +93,19 @@ export const user = {
 
                     allProjects.forEach(project => {
                         if (project.user === this.id) {
-                            this.allProjects.push({...project});
+                            this.tasks.forEach(task => {
+                                if (task.project === project.title) {
+                                    project.tasks.push({...task});
+                                }
+                            });
+
+                            const newProject = new Projects(project.title, this.id, project.id, project.tasks);
+
+                            this.allProjects.push({...newProject});
+                            console.log(this.allProjects);
                         }
                     });
+
                     callback();
                 }).catch((err) => { console.log(err) });
 

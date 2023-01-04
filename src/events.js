@@ -9,7 +9,7 @@ import {user} from './user.js';
 import {pubsub} from './pubsub.js';
 import {Projects} from './projects.js';
 import {Tasks} from './tasks.js';
-import {storeTask, deleteStoredTask, signInUser, signOutUser, updateTask, storeProject, deleteStoredProject} from './firebase.js';
+import {storeTask, deleteStoredTask, signInUser, signOutUser, updateTask, storeProject, deleteStoredProject, getProjectName} from './firebase.js';
 
 export const events = (() => {
 
@@ -301,7 +301,6 @@ export const events = (() => {
     }
 
     function createProjectElement(project) {
-        console.log(project);
         const ul = document.createElement('ul');
         ul.className = 'project';
         ul.setAttribute('data-id', project.id);
@@ -374,16 +373,21 @@ export const events = (() => {
 
         user.allProjects.forEach(project => {
             if (deadProject === project.title) {
+                let index = user.allProjects.indexOf(project);
+                user.allProjects.splice(index,1);
 
                 //Running allProjects search/removeTask twice because removing task shifts index and tasks were being missed.
                 user.allProjects.forEach(project => {
                     project.tasks.forEach(task => {
                         if (task.project === deadProject) {
+                            console.log(task);
                             project.removeTask(task);
+                            deleteStoredTask(task.id);
                             user.allProjects.forEach(project => {
                                 project.tasks.forEach(task => {
                                     if (task.project === deadProject) {
-                                        project.removeTask(task)
+                                        project.removeTask(task);
+                                        deleteStoredTask(task.id);
                                     }
                                 });
                             });
@@ -391,8 +395,6 @@ export const events = (() => {
                     });
                 });
 
-                let index = user.allProjects.indexOf(project);
-                user.allProjects.splice(index,1);
                 pubsub.pub('projectDeleted', project);
             }
         });
