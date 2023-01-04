@@ -1,32 +1,95 @@
 import {Projects} from './projects';
+import { getDocs } from 'firebase/firestore/lite';
+import { usersRef, taskRef, projectRef } from './firebase';
+import {format, addDays, parseISO} from 'date-fns';
 
 export const user = {
+    displayName: '',
+    imageUrl: '',
     inbox: new Projects('inbox'),
     todayInbox: new Projects('today'),
     weekInbox: new Projects('week'),
     allProjects: [],
+    loggedIn: false,
+    tasks: [],
+    id: '',
 
-    init() {
+    sortTasks() {
+        let date = format(new Date(), 'yyyy-MM-dd');;
+          
+        let week = format(addDays(parseISO(date), 7), 'yyyy-MM-dd')
 
-        if (JSON.parse(localStorage.getItem('allProjects')) !== null) {
-
-            let storedProjects = JSON.parse(localStorage.getItem('allProjects'));
-            
-            this.inbox = new Projects(storedProjects[0].title, storedProjects[0].tasks);
-            this.todayInbox = new Projects(storedProjects[1].title, storedProjects[1].tasks);
-            this.weekInbox = new Projects(storedProjects[2].title, storedProjects[2].tasks);
-            this.allProjects.push(this.inbox, this.todayInbox, this.weekInbox);
-    
-            for (let i=3; i< storedProjects.length; i++) {
-                let userProject = new Projects(storedProjects[i].title, storedProjects[i].tasks);
-                this.allProjects.push(userProject);
+        let todayTasks = [];
+        let weekTasks = [];
+        let allTasks = [];
+        this.tasks.forEach((task) => {
+            if (task.dueDate < date && task.complete != false) {
+                task.priority = 'high';
+                allTasks.push({...task});
+                todayTasks.push({...task});
+                weekTasks.push({...task});
+            } else if (task.dueDate === date) {
+                allTasks.push({...task});
+                todayTasks.push({...task});
+                weekTasks.push({...task});
+            } else if (task.dueDate < week && task.dueDate !== '') {
+                allTasks.push({...task});
+                weekTasks.push({...task});
+            } else if (task.dueDate === '') {
+                allTasks.push({...task});
             }
+        });
 
-        } else {
+        this.inbox = new Projects('inbox', this.id, 'inbox', allTasks);
+        this.todayInbox = new Projects('today', this.id, 'today', todayTasks);
+        this.weekInbox = new Projects('week', this.id, 'week', weekTasks);
+        this.allProjects.push(this.inbox, this.todayInbox, this.weekInbox);
+    },
 
-            this.allProjects.push(this.inbox, this.todayInbox, this.weekInbox);
-            localStorage.setItem('allProjects', JSON.stringify(this.allProjects));
+    init(callback) {
+        if (this.loggedIn) {
+            getDocs(taskRef)
+                .then((snapshot) => {
+                    let allTasks = [];
+                    snapshot.docs.forEach((doc) => {
+                        allTasks.push({...doc.data(), id: doc.id});
+                    });
+
+                    allTasks.forEach(task => {
+                        if (task.user === this.id) {
+                            this.tasks.push({ ...task});
+                        }
+                    });
+                    
+                    this.sortTasks();
+                    callback();
+                }).catch((err) => { console.log(err) });
+
+            getDocs(projectRef)
+                .then((snapshot) => {
+                    let allProjects = [];
+                    snapshot.docs.forEach((doc) => {
+                        allProjects.push({...doc.data(), id: doc.id});
+                    });
+
+                    allProjects.forEach(project => {
+                        if (project.user === this.id) {
+                            this.tasks.forEach(task => {
+                                if (task.project === project.title) {
+                                    project.tasks.push({...task});
+                                }
+                            });
+
+                            const newProject = new Projects(project.title, this.id, project.id, project.tasks);
+
+                            this.allProjects.push({...newProject});
+                        }
+                    });
+
+                    callback();
+                }).catch((err) => { console.log(err) });
 
         }
+            
     },
 };

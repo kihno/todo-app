@@ -11,6 +11,7 @@ import {user} from './user.js';
 import {pubsub} from './pubsub.js';
 import {Projects} from './projects.js';
 import {Tasks} from './tasks.js';
+import {storeTask, deleteStoredTask, signInUser, signOutUser, updateTask, storeProject, deleteStoredProject} from './firebase.js';
 
 export const events = (() => {
 
@@ -34,14 +35,28 @@ export const events = (() => {
     const todayButton = document.getElementById('today');
     const weekButton = document.getElementById('week');
     const projectElements = document.getElementsByClassName('project');
-    const logo = document.getElementById("logo");
-    const plusIcons = document.querySelectorAll(".plusIcon");
+    const projectElementArray = document.querySelectorAll('.project');
+    const signInButton = document.getElementById('sign-in');
+    const signOutButton = document.getElementById('sign-out');
+    const userInfo = document.getElementById('user-info');
+    // const userPic = document.getElementById('user-pic');
+    const userName = document.getElementById('user-name');
 
-    loadImages();
-    user.init();
-    let currentProject = user.inbox;
+    let currentProject
+    user.init(() => {
+        currentProject = user.inbox;
+        renderMain();
+    });
 
     // Events
+    signInButton.addEventListener('click', () => {
+        signInUser();
+    });
+
+    signOutButton.addEventListener('click', () => {
+        signOutUser();
+    });
+
     inboxButton.addEventListener('click', () => {
         removeProjectClass();
         inboxButton.classList.add('current');
@@ -82,17 +97,50 @@ export const events = (() => {
 
     projectSubmit.addEventListener('click', validateProject);
 
+    pubsub.sub('userLoggedIn', authenticateUser);
+    pubsub.sub('userLoggedOut', logOutUser);
+
     pubsub.sub('taskAdded', renderMain);
     pubsub.sub('taskDeleted', renderMain);
     pubsub.sub('projectAdded', renderSidebar);
     pubsub.sub('projectDeleted', renderSidebar);
 
     //Functions
-    function loadImages() {
-        logo.src = Logo;
-        plusIcons.forEach(icon => {
-            icon.src = PlusIcon;
+    function authenticateUser(authUser) {
+        user.loggedIn = true;
+        user.id = authUser.uid;
+        
+        userName.textContent = authUser.displayName;
+        // userPic.src = authUser.photoURL;
+
+        user.init(() => {
+            currentProject = user.inbox;
+            userInfo.classList.remove('hide');
+            signInButton.classList.add('hide');
+            renderMain();
+            renderSidebar();
         });
+    }
+
+    function logOutUser() {
+;       user.inbox = new Projects('inbox');
+        user.todayInbox = new Projects('today');
+        user.weekInbox = new Projects('week');
+        user.allProjects = [];
+        user.tasks = [];
+
+        user.loggedIn = false;
+        user.id = '';
+        
+        userName.textContent = '';
+        // userPic.src = '';
+
+        userInfo.classList.add('hide');
+        signInButton.classList.remove('hide');
+
+        currentProject = user.inbox;
+        renderMain();
+        clearProjectList();
     }
 
     function setStorage() {
@@ -100,13 +148,21 @@ export const events = (() => {
     }
 
     function renderSidebar() {
-        setStorage();
+        if (user.loggedIn === false) {
+            setStorage();
+            renderProjectList();
+            renderTasks(currentProject.tasks);
+        }
+
         renderProjectList();
         renderTasks(currentProject.tasks);
     }
 
     function renderMain() {
-        setStorage();
+        if (user.loggedIn === false) {
+            setStorage();
+            renderTasks(currentProject.tasks);
+        }
         renderTasks(currentProject.tasks);
     }
 
@@ -189,7 +245,12 @@ export const events = (() => {
         if (projectName.value === '') {
             projectError.textContent = 'Please enter project name';
         } else {
-            let newProject = new Projects(projectName.value);
+            let authUser = null;
+            if (user.loggedIn) {
+                authUser = user.id;
+            }
+
+            let newProject = new Projects(projectName.value, authUser);
             currentProject = newProject;
             taskButton.style.display = 'flex';
     
@@ -198,6 +259,7 @@ export const events = (() => {
             toggleProjectModal();
             clearProjectError();
     
+            storeProject(JSON.parse(JSON.stringify(newProject)));
             user.allProjects.push(newProject);
             pubsub.pub('projectAdded', newProject);
         }
@@ -211,11 +273,16 @@ export const events = (() => {
         if (title.value === '') {
             titleError.textContent = 'Please enter task name'
         } else {
-            const newTask = new Tasks(title.value, description.value, dueDate.value, priorityValue(priority), currentProject.title);
+            let authUser = null;
+            if (user.loggedIn) {
+                authUser = user.id;
+            }
+
+            const newTask = new Tasks(title.value, description.value, dueDate.value, priorityValue(priority), currentProject.title, authUser);
             pushTask(newTask);
+            storeTask(JSON.parse(JSON.stringify(newTask)));
             toggleTaskModal();
             clearTitleError();
-            console.log(currentProject);
         }
     }
 
@@ -238,6 +305,7 @@ export const events = (() => {
     function createProjectElement(project) {
         const ul = document.createElement('ul');
         ul.className = 'project';
+        ul.setAttribute('data-id', project.id);
         if (project.title === currentProject.title) {
             ul.classList.add('current');
         }
@@ -302,20 +370,25 @@ export const events = (() => {
     function deleteProject(e) {
         let projectUl = e.target.parentNode;
         let projectTitle = projectUl.querySelector('.projectTitle');
+        let projectId = projectUl.getAttribute('data-id');
         let deadProject = projectTitle.textContent;
 
         user.allProjects.forEach(project => {
             if (deadProject === project.title) {
+                let index = user.allProjects.indexOf(project);
+                user.allProjects.splice(index,1);
 
                 //Running allProjects search/removeTask twice because removing task shifts index and tasks were being missed.
                 user.allProjects.forEach(project => {
                     project.tasks.forEach(task => {
                         if (task.project === deadProject) {
                             project.removeTask(task);
+                            deleteStoredTask(task.id);
                             user.allProjects.forEach(project => {
                                 project.tasks.forEach(task => {
                                     if (task.project === deadProject) {
-                                        project.removeTask(task)
+                                        project.removeTask(task);
+                                        deleteStoredTask(task.id);
                                     }
                                 });
                             });
@@ -323,8 +396,6 @@ export const events = (() => {
                     });
                 });
 
-                let index = user.allProjects.indexOf(project);
-                user.allProjects.splice(index,1);
                 pubsub.pub('projectDeleted', project);
             }
         });
@@ -338,65 +409,85 @@ export const events = (() => {
         } else {
             renderTasks(currentProject.tasks);
         }
-    
-        
-        // inboxButton.classList.add('current');
-        // renderTasks(currentProject.tasks);
+
+        deleteStoredProject(projectId);
     }
 
     function deleteTask(e) {
         let taskUl = e.target.parentNode;
-        let taskTitle = taskUl.querySelector('.task-title').textContent;
-        let taskDescription = taskUl.querySelector('.task-description').textContent;
         let taskDueDate = taskUl.querySelector('.task-dueDate').textContent;
+        let taskId = taskUl.getAttribute('data-id');
 
-        let reformatDate = '';
+        let reformatDate;
         if (taskDueDate !== '') {
             reformatDate = format(new Date(taskDueDate), 'yyyy-MM-dd');
         }
 
         user.allProjects.forEach(project => {
             project.tasks.forEach(task => {
-                if (taskTitle === task.title && taskDescription === task.description && reformatDate === task.dueDate) {
+                if (taskId === task.id) {
                     project.removeTask(task);
                 }
             });
         });
+
+        deleteStoredTask(taskId);
     }
 
     function checkTask(e) {
         let checkbox = e.target;
         let task = e.target.parentNode.parentNode;
-        let index = task.getAttribute('data-index');
+        let id = task.getAttribute('data-id');
 
         checkbox.classList.toggle('checked');
         task.classList.toggle('complete');
 
-        if (currentProject.tasks[index].complete === false) {
-            currentProject.tasks[index].complete = true;
-            renderMain(currentProject.tasks);
-            
-        } else {
-            currentProject.tasks[index].complete = false;
-            renderMain(currentProject.tasks);
-            
-        }
+        user.allProjects.forEach(project => {
+            project.tasks.forEach(task => {
+                if (task.id === id) {
+                    if (task.complete === false) {
+                        task.complete = true;
+                        updateTask(id, task);
+                        renderMain(currentProject.tasks);
+                        
+                    } else {
+                        task.complete = false;
+                        updateTask(id, task);
+                        renderMain(currentProject.tasks);
+                    }
+                }
+            });
+        });
     }
 
     function renderProjectList() {
         for ( let i = projectElements.length; i < user.allProjects.length; i++) {
-            const newProject = new Projects(user.allProjects[i].title, user.allProjects[i].tasks);
+            let authUser = null;
+            if (user.loggedIn) {
+                authUser = user.id;
+            }
+
+            const newProject = new Projects(user.allProjects[i].title, authUser, user.allProjects[i].id, user.allProjects[i].tasks);
             createProjectElement(newProject);
+        }
+    }
+
+    function clearProjectList() {
+        while (projectList.children[3]) {
+            projectList.removeChild(projectList.children[3]);
         }
     }
 
     function renderTasks(project) {
         clearProject();
 
+        project.sort((a,b) => (a.dueDate > b.dueDate) ? 1 : ((b.dueDate > a.dueDate) ? -1 : 0))
+
         project.forEach(task => {
             const ul = document.createElement('ul');
             ul.className = 'task';
             ul.setAttribute('data-index', project.indexOf(task));
+            ul.setAttribute('data-id', task.id);
             taskList.appendChild(ul);
 
             const hexIcon = new Image();
@@ -418,6 +509,11 @@ export const events = (() => {
                         ul.classList.toggle('complete');
                     }
                 } else if (prop === 'dueDate' && task[prop] !== "") {
+                    let date = format(new Date(), 'yyyy-MM-dd');
+                    if (task[prop] < date && task.complete === false) {
+                        li.classList.add('overdue');
+                    }
+
                     li.textContent = format(parseISO(task[prop]), 'MM-dd-yyyy');
                 } else if (prop === 'priority') {
                     li.className += ' ' + task[prop];
@@ -437,6 +533,8 @@ export const events = (() => {
                     }
                 } else if (prop === 'project' && task[prop] === 'inbox') {
                     li.textContent = '';
+                } else if (prop === 'id' || prop === 'user') {
+                    continue;
                 } else {
                     li.textContent = task[prop];
                 }
