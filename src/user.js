@@ -14,25 +14,6 @@ export const user = {
     tasks: [],
     id: '',
 
-    // login() {
-    //     getDocs(usersRef)
-    //         .then((snapshot) => {
-    //             let users = [];
-
-    //             snapshot.docs.forEach((doc) => {
-    //                 users.push({...doc.data(), id: doc.id});
-    //             });
-
-    //             users.forEach((user) => {
-    //                 if (user.username == 'testUser') {
-    //                     this.id = user.id;
-    //                     this.loggedIn = true;
-    //                 }
-    //             });
-
-    //         }).catch((err) => { console.log(err) });
-    // },
-
     sortTasks() {
         let date = format(new Date(), 'yyyy-MM-dd');;
           
@@ -102,7 +83,6 @@ export const user = {
                             const newProject = new Projects(project.title, this.id, project.id, project.tasks);
 
                             this.allProjects.push({...newProject});
-                            console.log(this.allProjects);
                         }
                     });
 

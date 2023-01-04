@@ -380,7 +380,6 @@ export const events = (() => {
                 user.allProjects.forEach(project => {
                     project.tasks.forEach(task => {
                         if (task.project === deadProject) {
-                            console.log(task);
                             project.removeTask(task);
                             deleteStoredTask(task.id);
                             user.allProjects.forEach(project => {
