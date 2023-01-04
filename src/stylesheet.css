@@ -360,6 +360,11 @@ hr {
     width: 100%;
 }
 
+.footer {
+   text-align: center;
+   margin-top: auto;
+}
+
 .hide {
     display: none !important;
 }
