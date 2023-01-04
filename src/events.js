@@ -9,7 +9,7 @@ import {user} from './user.js';
 import {pubsub} from './pubsub.js';
 import {Projects} from './projects.js';
 import {Tasks} from './tasks.js';
-import {storeTask, deleteStoredTask, signInUser, signOutUser, updateTask} from './firebase.js';
+import {storeTask, deleteStoredTask, signInUser, signOutUser, updateTask, storeProject, deleteStoredProject} from './firebase.js';
 
 export const events = (() => {
 
@@ -33,6 +33,7 @@ export const events = (() => {
     const todayButton = document.getElementById('today');
     const weekButton = document.getElementById('week');
     const projectElements = document.getElementsByClassName('project');
+    const projectElementArray = document.querySelectorAll('.project');
     const signInButton = document.getElementById('sign-in');
     const signOutButton = document.getElementById('sign-out');
     const userInfo = document.getElementById('user-info');
@@ -115,11 +116,12 @@ export const events = (() => {
             userInfo.classList.remove('hide');
             signInButton.classList.add('hide');
             renderMain();
+            renderSidebar();
         });
     }
 
     function logOutUser() {
-        user.inbox = new Projects('inbox');
+;       user.inbox = new Projects('inbox');
         user.todayInbox = new Projects('today');
         user.weekInbox = new Projects('week');
         user.allProjects = [];
@@ -136,6 +138,7 @@ export const events = (() => {
 
         currentProject = user.inbox;
         renderMain();
+        clearProjectList();
     }
 
     function setStorage() {
@@ -240,7 +243,12 @@ export const events = (() => {
         if (projectName.value === '') {
             projectError.textContent = 'Please enter project name';
         } else {
-            let newProject = new Projects(projectName.value);
+            let authUser = null;
+            if (user.loggedIn) {
+                authUser = user.id;
+            }
+
+            let newProject = new Projects(projectName.value, authUser);
             currentProject = newProject;
             taskButton.style.display = 'flex';
     
@@ -249,6 +257,7 @@ export const events = (() => {
             toggleProjectModal();
             clearProjectError();
     
+            storeProject(JSON.parse(JSON.stringify(newProject)));
             user.allProjects.push(newProject);
             pubsub.pub('projectAdded', newProject);
         }
@@ -292,8 +301,10 @@ export const events = (() => {
     }
 
     function createProjectElement(project) {
+        console.log(project);
         const ul = document.createElement('ul');
         ul.className = 'project';
+        ul.setAttribute('data-id', project.id);
         if (project.title === currentProject.title) {
             ul.classList.add('current');
         }
@@ -358,6 +369,7 @@ export const events = (() => {
     function deleteProject(e) {
         let projectUl = e.target.parentNode;
         let projectTitle = projectUl.querySelector('.projectTitle');
+        let projectId = projectUl.getAttribute('data-id');
         let deadProject = projectTitle.textContent;
 
         user.allProjects.forEach(project => {
@@ -394,16 +406,16 @@ export const events = (() => {
         } else {
             renderTasks(currentProject.tasks);
         }
+
+        deleteStoredProject(projectId);
     }
 
     function deleteTask(e) {
         let taskUl = e.target.parentNode;
-        // let taskTitle = taskUl.querySelector('.task-title').textContent;
-        // let taskDescription = taskUl.querySelector('.task-description').textContent;
         let taskDueDate = taskUl.querySelector('.task-dueDate').textContent;
         let taskId = taskUl.getAttribute('data-id');
 
-        let reformatDate = '';
+        let reformatDate;
         if (taskDueDate !== '') {
             reformatDate = format(new Date(taskDueDate), 'yyyy-MM-dd');
         }
@@ -447,8 +459,26 @@ export const events = (() => {
 
     function renderProjectList() {
         for ( let i = projectElements.length; i < user.allProjects.length; i++) {
-            const newProject = new Projects(user.allProjects[i].title, user.allProjects[i].tasks);
+            let authUser = null;
+            if (user.loggedIn) {
+                authUser = user.id;
+            }
+
+            const newProject = new Projects(user.allProjects[i].title, authUser, user.allProjects[i].id, user.allProjects[i].tasks);
             createProjectElement(newProject);
+        }
+
+        // user.allProjects.forEach(project => {
+        //     if (project.title != 'inbox' && project.title != 'today' && project.title != 'week') {
+        //         const newProject = new Projects(project.title, user.id, project.tasks);
+        //         createProjectElement(newProject);
+        //     }
+        // });
+    }
+
+    function clearProjectList() {
+        while (projectList.children[3]) {
+            projectList.removeChild(projectList.children[3]);
         }
     }
 

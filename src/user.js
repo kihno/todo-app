@@ -1,7 +1,7 @@
 import {Projects} from './projects';
-import { getFirestore, collection, doc, addDoc, getDocs, deleteDoc } from 'firebase/firestore/lite';
-import { usersRef, taskRef } from './firebase';
-import {format, isWithinInterval, addDays, parseISO} from 'date-fns';
+import { getDocs } from 'firebase/firestore/lite';
+import { usersRef, taskRef, projectRef } from './firebase';
+import {format, addDays, parseISO} from 'date-fns';
 
 export const user = {
     displayName: '',
@@ -14,24 +14,24 @@ export const user = {
     tasks: [],
     id: '',
 
-    login() {
-        getDocs(usersRef)
-            .then((snapshot) => {
-                let users = [];
+    // login() {
+    //     getDocs(usersRef)
+    //         .then((snapshot) => {
+    //             let users = [];
 
-                snapshot.docs.forEach((doc) => {
-                    users.push({...doc.data(), id: doc.id});
-                });
+    //             snapshot.docs.forEach((doc) => {
+    //                 users.push({...doc.data(), id: doc.id});
+    //             });
 
-                users.forEach((user) => {
-                    if (user.username == 'testUser') {
-                        this.id = user.id;
-                        this.loggedIn = true;
-                    }
-                });
+    //             users.forEach((user) => {
+    //                 if (user.username == 'testUser') {
+    //                     this.id = user.id;
+    //                     this.loggedIn = true;
+    //                 }
+    //             });
 
-            }).catch((err) => { console.log(err) });
-    },
+    //         }).catch((err) => { console.log(err) });
+    // },
 
     sortTasks() {
         let date = format(new Date(), 'yyyy-MM-dd');;
@@ -82,9 +82,23 @@ export const user = {
                     
                     this.sortTasks();
 
-                    callback();
-
                 }).catch((err) => { console.log(err) });
+
+            getDocs(projectRef)
+                .then((snapshot) => {
+                    let allProjects = [];
+                    snapshot.docs.forEach((doc) => {
+                        allProjects.push({...doc.data(), id: doc.id});
+                    });
+
+                    allProjects.forEach(project => {
+                        if (project.user === this.id) {
+                            this.allProjects.push({...project});
+                        }
+                    });
+                    callback();
+                }).catch((err) => { console.log(err) });
+
         }
             
     },

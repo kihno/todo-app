@@ -1,3 +1,4 @@
 todo:
-tasks not loading from firebase on initial load
-delete tasks
+
+load project tasks
+

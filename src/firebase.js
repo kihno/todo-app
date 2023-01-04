@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, doc, addDoc, getDocs, deleteDoc, updateDoc } from 'firebase/firestore/lite';
+import { getFirestore, collection, doc, addDoc, deleteDoc, updateDoc } from 'firebase/firestore/lite';
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
 import { pubsub } from './pubsub';
 
@@ -22,20 +22,7 @@ const provider = new GoogleAuthProvider;
 
 export const usersRef = collection(db, 'users');
 export const taskRef = collection(db, 'tasks');
-
-// export const getData = () => {
-//     getDocs(usersRef)
-//     .then((snapshot) => {
-//         let tasks = [];
-//         snapshot.docs.forEach((doc) => {
-//             tasks.push({ ...doc.data(), id: doc.id })
-//         });
-
-//         console.log(tasks);
-         
-//         return tasks;
-//     }).catch((err) => { console.log(err) });
-// }
+export const projectRef = collection(db, 'projects');
 
 export const storeTask = (task) => {
     addDoc(taskRef, task);
@@ -48,7 +35,16 @@ export const updateTask = (id, updatedTask) => {
 }
 
 export const deleteStoredTask = (id) => {
-    const docRef = doc(db, 'tasks', id)
+    const docRef = doc(db, 'tasks', id);
+    deleteDoc(docRef);
+}
+
+export const storeProject = (project) => {
+    addDoc(projectRef, project);
+}
+
+export const deleteStoredProject = (id) => {
+    const docRef = doc(db, 'projects', id);
     deleteDoc(docRef);
 }
 

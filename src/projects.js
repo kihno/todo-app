@@ -2,8 +2,10 @@ import {pubsub} from './pubsub.js';
 
 export class Projects {
 
-    constructor(title, tasks) {
+    constructor(title, user, id, tasks) {
         this.title = title;
+        this.user = user;
+        this.id = id;
         this.tasks = tasks || [];
     }
 
