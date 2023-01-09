@@ -1,6 +1,6 @@
 # Taskmaster
 
-![](public/images/taskmaster-thumbnail.png)
+![](src/images/taskmaster-thumbnail.png)
 
 https://kihno.github.io/todo-app/
 
